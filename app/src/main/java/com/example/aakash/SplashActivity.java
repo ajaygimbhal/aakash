@@ -2,16 +2,20 @@ package com.example.aakash;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.aakash.databinding.ActivitySplashBinding;
+import com.example.aakash.ui.supports.FullScreen;
 
 public class SplashActivity extends AppCompatActivity {
 
     ActivitySplashBinding binding;
+    View view;
+    FullScreen fullScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +24,11 @@ public class SplashActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(binding.getRoot());
+
+        fullScreen = new FullScreen(view, getWindow());
+
+        fullScreen.transparentStatusBarAndNavigation();
+
 
         new Thread() {
             @Override
@@ -37,4 +46,5 @@ public class SplashActivity extends AppCompatActivity {
             }
         }.start();
     }
+
 }
