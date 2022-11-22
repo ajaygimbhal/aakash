@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.aakash">
+    package="com.jadhav.aakash">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -17,19 +17,19 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".LoginActivity"
+            android:name="com.jadhav.aakash.LoginActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".CommentReplyActivity"
+            android:name="com.jadhav.aakash.CommentReplyActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".CommentActivity"
+            android:name="com.jadhav.aakash.CommentActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".SplashActivity"
+            android:name="com.jadhav.aakash.SplashActivity"
             android:exported="true"
             android:noHistory="true"
             android:screenOrientation="portrait"
@@ -41,7 +41,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.jadhav.aakash.MainActivity"
             android:exported="false"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />

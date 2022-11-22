@@ -7,31 +7,31 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.aakash.ui.home.HomeFragment"
+        android:name="com.jadhav.aakash.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_friends"
-        android:name="com.example.aakash.ui.friends.FriendsFragment"
+        android:name="com.jadhav.aakash.ui.friends.FriendsFragment"
         android:label="@string/title_friends"
         tools:layout="@layout/fragment_friends" />
 
     <fragment
         android:id="@+id/navigation_add_post"
-        android:name="com.example.aakash.ui.addpost.AddPostFragment"
+        android:name="com.jadhav.aakash.ui.addpost.AddPostFragment"
         android:label="@string/add_post"
         tools:layout="@layout/fragment_add_post" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.aakash.ui.notifications.NotificationsFragment"
+        android:name="com.jadhav.aakash.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.example.aakash.ui.profile.ProfileFragment"
+        android:name="com.jadhav.aakash.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
 
