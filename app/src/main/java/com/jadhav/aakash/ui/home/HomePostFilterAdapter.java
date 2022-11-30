@@ -50,6 +50,7 @@ public class HomePostFilterAdapter extends RecyclerView.Adapter<HomePostFilterAd
 
         public void setHomePostFilterData(HomePostFilterModel homePostFilterModel) {
             binding.filterTitle.setText(homePostFilterModel.getFilterTitle());
+
         }
     }
 }

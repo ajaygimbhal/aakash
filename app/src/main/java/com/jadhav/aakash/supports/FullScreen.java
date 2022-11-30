@@ -1,4 +1,4 @@
-package com.jadhav.aakash.ui.supports;
+package com.jadhav.aakash.supports;
 
 import android.graphics.Color;
 import android.os.Build;

@@ -56,4 +56,13 @@
         app:layout_constraintTop_toTopOf="@+id/googleBtn"
         app:srcCompat="@drawable/google_icon" />
 
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/googleBtn"
+        app:layout_constraintStart_toStartOf="@+id/googleBtn"
+        app:layout_constraintTop_toBottomOf="@+id/googleBtn" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

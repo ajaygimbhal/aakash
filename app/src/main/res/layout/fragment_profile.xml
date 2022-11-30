@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.profile.ProfileFragment">
 
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/desc"
@@ -26,46 +27,47 @@
                 tools:layout_editor_absoluteX="80dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/circleImageView"
+                    android:id="@+id/userProfileImg"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/aakash_icon"
+                    android:src="@drawable/ic_baseline_profile"
                     app:civ_border_color="@color/white"
                     app:civ_border_width="2dp"
+                    android:scaleType="centerCrop"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/userProfileName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:fontFamily="sans-serif"
                     android:text="Unknown Person"
                     android:textColor="@color/white"
-                    android:textSize="15sp"
-                    app:layout_constraintEnd_toEndOf="@+id/circleImageView"
-                    app:layout_constraintStart_toStartOf="@+id/circleImageView"
-                    app:layout_constraintTop_toBottomOf="@+id/circleImageView" />
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="@+id/userProfileImg"
+                    app:layout_constraintStart_toStartOf="@+id/userProfileImg"
+                    app:layout_constraintTop_toBottomOf="@+id/userProfileImg" />
 
                 <TextView
-                    android:id="@+id/textView4"
+                    android:id="@+id/userProfileMember"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
-                    android:text="Member: 9238"
+                    android:text="Member: 00"
                     android:textColor="@color/white"
                     android:textSize="10sp"
-                    app:layout_constraintEnd_toEndOf="@+id/textView3"
-                    app:layout_constraintStart_toStartOf="@+id/textView3"
-                    app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                    app:layout_constraintEnd_toEndOf="@+id/userProfileName"
+                    app:layout_constraintStart_toStartOf="@+id/userProfileName"
+                    app:layout_constraintTop_toBottomOf="@+id/userProfileName" />
 
                 <ImageView
-                    android:id="@+id/imageView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/logout"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
                     android:src="@drawable/ic_baseline_settings"
@@ -73,14 +75,14 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-                    android:id="@+id/imageView5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/profileImgBtn"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:layout_marginStart="8dp"
-                    android:src="@drawable/ic_baseline_arrow_back"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+                    android:src="@drawable/upload_image"
+                    app:layout_constraintBottom_toBottomOf="@+id/logout"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/imageView4" />
+                    app:layout_constraintTop_toTopOf="@+id/logout" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -95,6 +97,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
 
                 <TextView
+                    android:id="@+id/inviteFriends"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Invite Friends"
@@ -108,13 +111,14 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/recentMember"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:text="Your Member"
+                android:text="Recent Members"
                 android:textColor="@color/black"
                 android:textSize="20sp"
+                android:visibility="gone"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
@@ -122,14 +126,15 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/memberRecycler"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/desc"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView5"
+                app:layout_constraintTop_toBottomOf="@+id/recentMember"
                 tools:listitem="@layout/profile_member_card_view" />
 
             <View
@@ -156,7 +161,19 @@
                 app:spanCount="2"
                 tools:listitem="@layout/profile_post_card_view" />
 
-
+            <TextView
+                android:id="@+id/postNotFound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Post Not Found"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

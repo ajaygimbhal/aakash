@@ -14,7 +14,7 @@
         android:paddingTop="5dp"
         android:paddingEnd="10dp"
         android:paddingBottom="5dp"
-        android:text="Today"
+        android:text="All"
         android:textAllCaps="false"
         android:textColor="@color/purple_500"
         android:textSize="20sp" />

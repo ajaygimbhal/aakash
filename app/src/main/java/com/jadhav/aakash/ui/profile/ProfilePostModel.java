@@ -5,10 +5,12 @@ import androidx.annotation.Keep;
 @Keep
 public class ProfilePostModel {
     private String postId;
+    private String postTitle;
     private String postImage;
 
-    public ProfilePostModel(String postId, String postImage) {
+    public ProfilePostModel(String postId, String postTitle, String postImage) {
         this.postId = postId;
+        this.postTitle = postTitle;
         this.postImage = postImage;
     }
 
@@ -18,6 +20,14 @@ public class ProfilePostModel {
 
     public void setPostId(String postId) {
         this.postId = postId;
+    }
+
+    public String getPostTitle() {
+        return postTitle;
+    }
+
+    public void setPostTitle(String postTitle) {
+        this.postTitle = postTitle;
     }
 
     public String getPostImage() {

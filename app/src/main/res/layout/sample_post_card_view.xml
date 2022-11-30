@@ -6,14 +6,6 @@
     android:layout_marginBottom="5dp"
     android:orientation="vertical">
 
-    <View
-        android:id="@+id/moreMenuView"
-        android:layout_width="1dp"
-        android:layout_height="1dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:background="@android:color/white" />
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,33 +31,24 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/postUserIcon"
+                    <View
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:src="@drawable/ic_baseline_profile"
-                        app:civ_border_color="@color/purple_500"
-                        app:civ_border_width="1dp" />
+                        android:background="@drawable/sample_friend_icon_bg" />
 
-                    <TextView
-                        android:id="@+id/postUsername"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <View
+                        android:layout_width="150dp"
+                        android:layout_height="15dp"
                         android:layout_marginStart="5dp"
-                        android:maxLength="20"
-                        android:text="@string/unknown"
-                        android:textColor="@color/purple_500"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:background="@color/gray_lite" />
                 </LinearLayout>
 
                 <ImageView
-                    android:id="@+id/postMoreBtn"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="10dp"
-                    android:src="@drawable/ic_baseline_more" />
+                    android:background="@drawable/post_more_options_bg" />
 
             </RelativeLayout>
 
@@ -73,16 +56,12 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:background="@color/black">
+            android:layout_height="400dp">
 
-            <ImageView
-                android:id="@+id/postImg"
+            <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="TODO"
-                android:scaleType="centerCrop"
-                android:src="@drawable/aakash_icon" />
+                android:background="@color/gray_lite"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -103,6 +82,7 @@
         <HorizontalScrollView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/desc"
             android:fillViewport="true"
             android:measureAllChildren="false"
             android:scrollbars="none">
@@ -115,38 +95,23 @@
                 android:orientation="horizontal"
                 android:padding="5dp">
 
-                <TextView
-                    android:id="@+id/likeBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <View
+                    android:layout_width="140dp"
+                    android:layout_height="20dp"
                     android:layout_marginEnd="10dp"
-                    android:drawablePadding="3dp"
-                    android:text="@string/like"
-                    android:textColor="@color/purple_500"
-                    android:textSize="15sp"
-                    app:drawableStartCompat="@drawable/ic_baseline_thumb_up" />
+                    android:background="@color/gray_lite" />
 
-                <TextView
-                    android:id="@+id/commentBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <View
+                    android:layout_width="140dp"
+                    android:layout_height="20dp"
                     android:layout_marginEnd="10dp"
-                    android:drawablePadding="3dp"
-                    android:text="@string/comment"
-                    android:textColor="@color/purple_500"
-                    android:textSize="15sp"
-                    app:drawableStartCompat="@drawable/ic_baseline_comment" />
+                    android:background="@color/gray_lite" />
 
-                <TextView
-                    android:id="@+id/shareBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:drawablePadding="3dp"
-                    android:text="@string/share"
-                    android:textColor="@color/blue"
-                    android:textSize="15sp"
-                    app:drawableStartCompat="@drawable/ic_baseline_share" />
+                <View
+                    android:layout_width="140dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@color/gray_lite" />
 
 
             </LinearLayout>

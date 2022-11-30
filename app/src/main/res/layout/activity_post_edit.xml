@@ -5,23 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    tools:context=".ui.addpost.AddPostFragment">
+    tools:context=".PostEditActivity">
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="Create Post"
+        android:text="Edit Post"
         android:textColor="@color/blue"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/postSubmitBtn"
+        app:layout_constraintBottom_toBottomOf="@+id/editPostSubmitBtn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/postSubmitBtn" />
+        app:layout_constraintTop_toTopOf="@+id/editPostSubmitBtn" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/postSubmitBtn"
+        android:id="@+id/editPostSubmitBtn"
         android:layout_width="75dp"
         android:layout_height="32dp"
         android:layout_marginTop="8dp"
@@ -43,10 +43,10 @@
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
         android:background="@color/gray_lite"
-        app:layout_constraintTop_toBottomOf="@+id/postSubmitBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/editPostSubmitBtn" />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profileIcon"
+        android:id="@+id/editProfileIcon"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginTop="8dp"
@@ -61,12 +61,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingStart="4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/profileIcon"
-        app:layout_constraintStart_toEndOf="@+id/profileIcon"
-        app:layout_constraintTop_toTopOf="@+id/profileIcon">
+        app:layout_constraintBottom_toBottomOf="@+id/editProfileIcon"
+        app:layout_constraintStart_toEndOf="@+id/editProfileIcon"
+        app:layout_constraintTop_toTopOf="@+id/editProfileIcon">
 
         <TextView
-            android:id="@+id/username"
+            android:id="@+id/editUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/unknown"
@@ -75,7 +75,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/member"
+            android:id="@+id/editMember"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Members: 00"
@@ -86,7 +86,7 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/postTitleText"
+        android:id="@+id/editPostTitleText"
         android:layout_width="0dp"
         android:maxLength="50"
         android:layout_height="0dp"
@@ -98,14 +98,14 @@
         android:hint="What's on your mind ?"
         android:inputType="textPersonName"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/postImagePrev"
+        app:layout_constraintBottom_toTopOf="@+id/editPostImagePrev"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/profileIcon"
-        app:layout_constraintTop_toBottomOf="@+id/profileIcon" />
+        app:layout_constraintStart_toStartOf="@+id/editProfileIcon"
+        app:layout_constraintTop_toBottomOf="@+id/editProfileIcon" />
 
 
     <ImageView
-        android:id="@+id/chooseImageBtn"
+        android:id="@+id/editChooseImageBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
@@ -124,9 +124,9 @@
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/chooseImageBtn"
+        app:layout_constraintBottom_toBottomOf="@+id/editChooseImageBtn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/chooseImageBtn" />
+        app:layout_constraintTop_toTopOf="@+id/editChooseImageBtn" />
 
 
     <View
@@ -135,11 +135,11 @@
         android:layout_height="1dp"
         android:layout_marginBottom="4dp"
         android:background="@color/gray_lite"
-        app:layout_constraintBottom_toTopOf="@+id/chooseImageBtn"
+        app:layout_constraintBottom_toTopOf="@+id/editChooseImageBtn"
         tools:layout_editor_absoluteX="10dp" />
 
     <ImageView
-        android:id="@+id/postImagePrev"
+        android:id="@+id/editPostImagePrev"
         android:layout_width="0dp"
         android:layout_height="220dp"
         android:layout_marginStart="16dp"
@@ -150,7 +150,7 @@
         app:layout_constraintBottom_toTopOf="@+id/view2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileIcon" />
+        app:layout_constraintTop_toBottomOf="@+id/editProfileIcon" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

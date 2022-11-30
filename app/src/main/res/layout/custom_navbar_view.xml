@@ -43,6 +43,7 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginEnd="10dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/ic_baseline_profile"
         app:civ_border_color="@color/white"
         app:civ_border_width="1dp"

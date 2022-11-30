@@ -4,13 +4,14 @@ import androidx.annotation.Keep;
 
 @Keep
 public class FriendsModel {
-    private String friendId, friendIconUrl, friendUsername, friendMembers;
+    private String friendId, friendIconUrl, friendUsername;
+    private int friendMemberCount;
 
-    public FriendsModel(String friendId, String friendIconUrl, String friendUsername, String friendMember) {
+    public FriendsModel(String friendId, String friendIconUrl, String friendUsername, int friendMemberCount) {
         this.friendId = friendId;
         this.friendIconUrl = friendIconUrl;
         this.friendUsername = friendUsername;
-        this.friendMembers = friendMember;
+        this.friendMemberCount = friendMemberCount;
     }
 
     public String getFriendId() {
@@ -37,11 +38,11 @@ public class FriendsModel {
         this.friendUsername = friendUsername;
     }
 
-    public String getFriendMembers() {
-        return friendMembers;
+    public int getFriendMemberCount() {
+        return friendMemberCount;
     }
 
-    public void setFriendMembers(String friendMember) {
-        this.friendMembers = friendMember;
+    public void setFriendMemberCount(int friendMemberCount) {
+        this.friendMemberCount = friendMemberCount;
     }
 }

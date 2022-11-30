@@ -48,11 +48,36 @@
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/AKSHAY/app/src/main/res/layout/profile_member_card_view.xml" value="0.18055555555555555" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/AKSHAY/app/src/main/res/layout/profile_post_card_view.xml" value="0.25" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/AKSHAY/app/src/main/res/menu/bottom_nav_menu.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/active_button_bg.xml" value="0.2025" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/active_post_filter_view_bg.xml" value="0.2025" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/ic_baseline_delete.xml" value="0.2115" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/ic_baseline_edit.xml" value="0.2025" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/post_filter_view_bg.xml" value="0.2025" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/post_more_options_bg.xml" value="0.2105" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/sample_friend_icon_bg.xml" value="0.2115" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/sample_member_btn_bg.xml" value="0.2095" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/activity_comment.xml" value="0.22" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/activity_login.xml" value="0.1814814814814815" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/activity_main.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/activity_post_edit.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/comment_card_view.xml" value="0.1814814814814815" />
-        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/fragment_add_post.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/post_card_view.xml" value="0.22" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/custom_navbar_view.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/fragment_add_post.xml" value="0.18" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/fragment_friends.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/fragment_home.xml" value="0.16312942155638785" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/fragment_profile.xml" value="0.18" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/friend_card_view.xml" value="0.1" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/post_card_view.xml" value="0.18" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/post_filter_card_view.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/profile_member_card_view.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/profile_post_card_view.xml" value="0.25" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/sample_friend_card_view.xml" value="0.25" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/sample_post_card_view.xml" value="0.19" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/sample_profile_member_card_view.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/sample_profile_post_card_view.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/menu/bottom_nav_menu.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/menu/post_more_options.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/menu/profile_menu.xml" value="0.20416666666666666" />
       </map>
     </option>
   </component>

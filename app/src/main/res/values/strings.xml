@@ -7,12 +7,14 @@
     <string name="title_profile">Profile</string>
     <string name="todo">TODO</string>
     <string name="share">Share</string>
-    <string name="like">Like</string>
+    <string name="like">Like(00)</string>
+    <string name="comment">Comment(00)</string>
     <string name="example_text">example of the text</string>
     <string name="desc">description</string>
     <string name="unknown">Unknown</string>
-    <string name="comment">Comment</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_post">Add Post</string>
     <string name="member">Member</string>
+    <string name="logout">LogOut</string>
+    <string name="post_not_found">Post Not Found</string>
 </resources>

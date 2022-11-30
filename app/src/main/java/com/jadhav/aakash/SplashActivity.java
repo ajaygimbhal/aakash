@@ -9,13 +9,15 @@ import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.jadhav.aakash.databinding.ActivitySplashBinding;
-import com.jadhav.aakash.ui.supports.FullScreen;
+import com.jadhav.aakash.supports.PrivateStorage;
+import com.jadhav.aakash.supports.FullScreen;
 
 public class SplashActivity extends AppCompatActivity {
 
     ActivitySplashBinding binding;
     View view;
     FullScreen fullScreen;
+    PrivateStorage privateStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +26,9 @@ public class SplashActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(binding.getRoot());
+
+        privateStorage = new PrivateStorage(this);
+
 
         fullScreen = new FullScreen(view, getWindow());
 
@@ -40,7 +45,11 @@ public class SplashActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
-                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    if (privateStorage.isUserLogin()) {
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    } else {
+                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                    }
                     finish();
                 }
             }
