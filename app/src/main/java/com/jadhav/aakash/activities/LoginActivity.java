@@ -1,4 +1,4 @@
-package com.jadhav.aakash;
+package com.jadhav.aakash.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.jadhav.aakash.R;
 import com.jadhav.aakash.databinding.ActivityLoginBinding;
 import com.jadhav.aakash.supports.PrivateStorage;
 import com.jadhav.aakash.supports.Toasty;

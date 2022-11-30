@@ -16,7 +16,7 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.jadhav.aakash.CommentActivity;
+import com.jadhav.aakash.activities.CommentActivity;
 import com.jadhav.aakash.R;
 import com.jadhav.aakash.databinding.PostCardViewBinding;
 import com.squareup.picasso.Picasso;

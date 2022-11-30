@@ -1,4 +1,4 @@
-package com.jadhav.aakash;
+package com.jadhav.aakash.activities;
 
 import android.os.Bundle;
 
@@ -10,6 +10,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.jadhav.aakash.R;
 import com.jadhav.aakash.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {

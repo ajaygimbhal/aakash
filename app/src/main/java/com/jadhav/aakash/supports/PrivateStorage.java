@@ -7,7 +7,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.jadhav.aakash.LoginActivity;
+import com.jadhav.aakash.activities.LoginActivity;
 
 import java.util.HashMap;
 

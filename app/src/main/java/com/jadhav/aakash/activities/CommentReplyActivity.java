@@ -1,19 +1,19 @@
-package com.jadhav.aakash;
+package com.jadhav.aakash.activities;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.jadhav.aakash.databinding.ActivityCommentBinding;
+import com.jadhav.aakash.databinding.ActivityCommentReplyBinding;
 
-public class CommentActivity extends AppCompatActivity {
+public class CommentReplyActivity extends AppCompatActivity {
 
-    ActivityCommentBinding binding;
+    ActivityCommentReplyBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityCommentBinding.inflate(getLayoutInflater());
+        binding = ActivityCommentReplyBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         getSupportActionBar().hide();
     }

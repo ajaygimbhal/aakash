@@ -1,4 +1,4 @@
-package com.jadhav.aakash;
+package com.jadhav.aakash.activities;
 
 import static com.jadhav.aakash.supports.PrivateStorage.PROFILE_BITMAP_IMAGE;
 import static com.jadhav.aakash.supports.PrivateStorage.USERNAME;
@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.jadhav.aakash.R;
 import com.jadhav.aakash.databinding.ActivityPostEditBinding;
 import com.jadhav.aakash.supports.CompressImage;
 import com.jadhav.aakash.supports.Post;

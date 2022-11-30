@@ -1,4 +1,4 @@
-package com.jadhav.aakash;
+package com.jadhav.aakash.activities;
 
 import android.content.Intent;
 import android.os.Bundle;

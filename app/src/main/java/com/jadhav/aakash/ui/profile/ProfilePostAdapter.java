@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.jadhav.aakash.PostEditActivity;
+import com.jadhav.aakash.activities.PostEditActivity;
 import com.jadhav.aakash.R;
 import com.jadhav.aakash.databinding.ProfilePostCardViewBinding;
 import com.jadhav.aakash.supports.Toasty;

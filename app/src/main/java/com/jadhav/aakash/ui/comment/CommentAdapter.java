@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.jadhav.aakash.CommentReplyActivity;
+import com.jadhav.aakash.activities.CommentReplyActivity;
 import com.jadhav.aakash.R;
 import com.jadhav.aakash.databinding.CommentCardViewBinding;
 import com.squareup.picasso.Picasso;
