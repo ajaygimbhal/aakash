@@ -109,6 +109,7 @@ public class FriendsFragment extends Fragment {
                         friendsModelArrayList.clear();
                         if (snapshot.exists()) {
                             binding.friendNotFound.setVisibility(View.GONE);
+                            binding.friendsRecycler.setVisibility(View.VISIBLE);
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                 User user = dataSnapshot.getValue(User.class);
                                 String friendId = dataSnapshot.getKey();
@@ -121,6 +122,7 @@ public class FriendsFragment extends Fragment {
                                 }
                             }
                         } else {
+                            binding.friendsRecycler.setVisibility(View.GONE);
                             binding.friendNotFound.setVisibility(View.VISIBLE);
                         }
                         loadLimit += 5;

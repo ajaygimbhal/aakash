@@ -15,12 +15,14 @@ import java.util.ArrayList;
 
 public class HomePostFilterAdapter extends RecyclerView.Adapter<HomePostFilterAdapter.HomePostFilterHolder> {
 
+    public OnClickListener listener;
     ArrayList<HomePostFilterModel> filterModelArrayList;
     Context context;
 
-    public HomePostFilterAdapter(ArrayList<HomePostFilterModel> filterModelArrayList, Context context) {
+    public HomePostFilterAdapter(ArrayList<HomePostFilterModel> filterModelArrayList, Context context, OnClickListener listener) {
         this.filterModelArrayList = filterModelArrayList;
         this.context = context;
+        this.listener = listener;
     }
 
     @NonNull
@@ -31,12 +33,16 @@ public class HomePostFilterAdapter extends RecyclerView.Adapter<HomePostFilterAd
 
     @Override
     public void onBindViewHolder(@NonNull HomePostFilterHolder holder, int position) {
-        holder.setHomePostFilterData(filterModelArrayList.get(position));
+        holder.setHomePostFilterData(filterModelArrayList.get(position), position, listener);
     }
 
     @Override
     public int getItemCount() {
         return filterModelArrayList.size();
+    }
+
+    public interface OnClickListener {
+        void OnClick(int position, String type);
     }
 
     public class HomePostFilterHolder extends RecyclerView.ViewHolder {
@@ -48,8 +54,20 @@ public class HomePostFilterAdapter extends RecyclerView.Adapter<HomePostFilterAd
             binding = PostFilterCardViewBinding.bind(itemView);
         }
 
-        public void setHomePostFilterData(HomePostFilterModel homePostFilterModel) {
+        public void setHomePostFilterData(HomePostFilterModel homePostFilterModel, int position, OnClickListener listener) {
+
+            if (homePostFilterModel.isSelected()) {
+                binding.filterTitle.setBackground(context.getResources().getDrawable(R.drawable.active_post_filter_view_bg));
+                binding.filterTitle.setTextColor(context.getResources().getColor(R.color.white));
+            } else {
+                binding.filterTitle.setBackground(context.getResources().getDrawable(R.drawable.post_filter_view_bg));
+                binding.filterTitle.setTextColor(context.getResources().getColor(R.color.blue));
+            }
             binding.filterTitle.setText(homePostFilterModel.getFilterTitle());
+
+            binding.filterTitle.setOnClickListener(view -> {
+                listener.OnClick(position, homePostFilterModel.getFilterTitle());
+            });
 
         }
     }

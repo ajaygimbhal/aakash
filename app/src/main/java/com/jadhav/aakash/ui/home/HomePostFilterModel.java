@@ -2,23 +2,15 @@ package com.jadhav.aakash.ui.home;
 
 public class HomePostFilterModel {
 
-    private int filterPosition;
     private String filterTitle;
+    private boolean selected;
 
     public HomePostFilterModel() {
     }
 
-    public HomePostFilterModel(int filterPosition, String filterTitle) {
-        this.filterPosition = filterPosition;
+    public HomePostFilterModel(String filterTitle, boolean selected) {
         this.filterTitle = filterTitle;
-    }
-
-    public int getFilterPosition() {
-        return filterPosition;
-    }
-
-    public void setFilterPosition(int filterPosition) {
-        this.filterPosition = filterPosition;
+        this.selected = selected;
     }
 
     public String getFilterTitle() {
@@ -27,5 +19,13 @@ public class HomePostFilterModel {
 
     public void setFilterTitle(String filterTitle) {
         this.filterTitle = filterTitle;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

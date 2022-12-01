@@ -282,6 +282,7 @@ public class ProfileFragment extends Fragment {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.exists()) {
                                 binding.postNotFound.setVisibility(View.GONE);
+                                binding.postRecycler.setVisibility(View.VISIBLE);
                                 profilePostModels.clear();
                                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                     Post post = dataSnapshot.getValue(Post.class);
@@ -296,6 +297,7 @@ public class ProfileFragment extends Fragment {
                                 postAdapter.notifyDataSetChanged();
                             } else {
 
+                                binding.postRecycler.setVisibility(View.GONE);
                                 binding.postNotFound.setVisibility(View.VISIBLE);
 
                             }
