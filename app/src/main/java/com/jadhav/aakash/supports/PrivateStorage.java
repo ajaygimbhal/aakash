@@ -9,6 +9,8 @@ import android.net.NetworkInfo;
 
 import com.jadhav.aakash.activities.LoginActivity;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 public class PrivateStorage {
@@ -81,6 +83,12 @@ public class PrivateStorage {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
         return isConnected;
+    }
+
+    public String dateTime(long nowTime){
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
+        String strDate = sdfDate.format(nowTime);
+        return strDate;
     }
 
 }

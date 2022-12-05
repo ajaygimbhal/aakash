@@ -167,10 +167,10 @@ public class AddPostFragment extends Fragment {
 
                 String postTitle = binding.postTitleText.getText().toString();
                 String postUserId = privateStorage.userDetail().put(USER_ID, null);
-                String postDatetime = String.valueOf(System.currentTimeMillis());
+                String postDatetime = privateStorage.dateTime(System.currentTimeMillis());
                 firebaseStorage.getReference().child("PostImage/" + imageNameGen).getDownloadUrl().addOnSuccessListener(uri -> {
 
-                    Post post = new Post(postTitle, postUserId, uri.toString(), postDatetime);
+                    Post post = new Post(postTitle, postUserId, uri.toString(), postDatetime.substring(0, postDatetime.lastIndexOf(" ")));
                     firebaseDatabase.getReference("Posts")
                             .child(postId)
                             .setValue(post)

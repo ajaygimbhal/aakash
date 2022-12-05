@@ -1,19 +1,18 @@
 package com.jadhav.aakash.ui.home;
 
 import static com.jadhav.aakash.supports.PrivateStorage.PROFILE_BITMAP_IMAGE;
-import static com.jadhav.aakash.supports.PrivateStorage.USER_ID;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,9 +33,9 @@ import java.util.Collections;
 public class HomeFragment extends Fragment {
 
     private static final String TAG = "HomeFragment";
+    private static String postType;
     private final String POST_ALL = "All";
     private final String POST_TODAY = "Today";
-    private final String POST_MEMBERS = "Member Posts";
     private final String POST_TOP_LIKE = "Top like";
     private final String POST_YESTERDAY = "Yesterday";
     public TextView postNoExists;
@@ -49,6 +48,8 @@ public class HomeFragment extends Fragment {
     private FirebaseDatabase firebaseDatabase;
     private PrivateStorage privateStorage;
     private int loadLimit = 5;
+
+    String postUserName, postUserIcon;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -78,7 +79,6 @@ public class HomeFragment extends Fragment {
         filterModelArrayList.clear();
         filterModelArrayList.add(new HomePostFilterModel("All", true));
         filterModelArrayList.add(new HomePostFilterModel("Today", false));
-        filterModelArrayList.add(new HomePostFilterModel("Member Posts", false));
         filterModelArrayList.add(new HomePostFilterModel("Top like", false));
         filterModelArrayList.add(new HomePostFilterModel("Yesterday", false));
         filterAdapter = new HomePostFilterAdapter(filterModelArrayList, getContext(), new HomePostFilterAdapter.OnClickListener() {
@@ -87,7 +87,6 @@ public class HomeFragment extends Fragment {
                 filterModelArrayList.clear();
                 filterModelArrayList.add(new HomePostFilterModel("All", false));
                 filterModelArrayList.add(new HomePostFilterModel("Today", false));
-                filterModelArrayList.add(new HomePostFilterModel("Member Posts", false));
                 filterModelArrayList.add(new HomePostFilterModel("Top like", false));
                 filterModelArrayList.add(new HomePostFilterModel("Yesterday", false));
 
@@ -97,7 +96,9 @@ public class HomeFragment extends Fragment {
                 loadLimit = 5;
                 postModelArrayList.clear();
                 postAdapter.notifyDataSetChanged();
-                postDataLoad(type);
+                postType = type;
+                postDataLoad();
+
             }
         });
         binding.filterRecycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false));
@@ -106,190 +107,187 @@ public class HomeFragment extends Fragment {
 
 
         // post recycler view //
-        postDataLoad(POST_ALL);
+        postType = POST_ALL;
+        postDataLoad();
 
         postAdapter = new HomePostAdapter(postModelArrayList, getContext());
         binding.postRecycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         binding.postRecycler.setAdapter(postAdapter);
         postAdapter.notifyDataSetChanged();
 
+        binding.nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if (v.getChildAt(v.getChildCount() - 1) != null) {
+                if ((scrollY >= (v.getChildAt(v.getChildCount() - 1).getMeasuredHeight() - v.getMeasuredHeight())) && scrollY > oldScrollY) {
+                    postDataLoad();
+                }
+            }
+        });
+
 
         return binding.getRoot();
     }
 
-    private void postDataLoad(String type) {
+    private void postDataLoad() {
 
-        switch (type) {
-            case POST_ALL:
-                firebaseDatabase.getReference("Posts")
-                        .limitToLast(loadLimit)
-                        .addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot.exists()) {
-                                    postModelArrayList.clear();
-                                    postNoExists.setVisibility(View.GONE);
-                                    postRecycler.setVisibility(View.VISIBLE);
-                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                        Post post = dataSnapshot.getValue(Post.class);
-                                        String postId = dataSnapshot.getKey();
-                                        String postUserId = post.getPostUserId();
-                                        firebaseDatabase.getReference("Users/" + postUserId)
-                                                .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                        if (snapshot.exists()) {
-                                                            User user = snapshot.getValue(User.class);
-                                                            String postUserName = user.getUsername();
-                                                            String postUserIcon = user.getProfileImg();
+        if (postType == POST_ALL) {
+            firebaseDatabase.getReference("Posts")
+                    .limitToLast(loadLimit)
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public synchronized void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                postModelArrayList.clear();
+                                postNoExists.setVisibility(View.GONE);
+                                postRecycler.setVisibility(View.VISIBLE);
 
-                                                            postModelArrayList.add(new HomePostModel(postId, postUserId, postUserName, postUserIcon, post.getPostTitle(), post.getPostImageUrl(), "2342", "983"));
-
-                                                            postAdapter.notifyDataSetChanged();
-                                                        }
+                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                    Post post = dataSnapshot.getValue(Post.class);
+                                    String postId = dataSnapshot.getKey();
+                                    String postUserId = post.getPostUserId();
+                                    firebaseDatabase.getReference("Users/" + postUserId)
+                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public synchronized void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if (snapshot.exists()) {
+                                                        User user = snapshot.getValue(User.class);
+                                                        postUserName = user.getUsername();
+                                                        postUserIcon = user.getProfileImg();
 
                                                     }
 
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError error) {
+                                                }
 
-                                                    }
-                                                });
-                                    }
-                                    Collections.reverse(postModelArrayList);
-                                } else {
-                                    postNoExists.setVisibility(View.VISIBLE);
-                                    postRecycler.setVisibility(View.GONE);
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+
+                                    postModelArrayList.add(new HomePostModel(postId, postUserId, postUserName, postUserIcon, post.getPostTitle(), post.getPostImageUrl(), "2342", "983"));
                                 }
+                                loadLimit +=5;
+                                Collections.reverse(postModelArrayList);
+                                postAdapter.notifyDataSetChanged();
+                            } else {
+                                postNoExists.setVisibility(View.VISIBLE);
+                                postRecycler.setVisibility(View.GONE);
                             }
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                            }
-                        });
-                break;
+                        }
+                    });
+        } else if (postType == POST_TODAY) {
 
-            case POST_TODAY:
-                firebaseDatabase.getReference("Posts")
-                        .orderByChild("postDate").startAt(System.currentTimeMillis())
-                        .limitToLast(loadLimit)
-                        .addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot.exists()) {
-                                    postModelArrayList.clear();
-                                    postRecycler.setVisibility(View.VISIBLE);
-                                    postNoExists.setVisibility(View.GONE);
-                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                        Post post = dataSnapshot.getValue(Post.class);
-                                        String postId = dataSnapshot.getKey();
-                                        String postUserId = post.getPostUserId();
-                                        firebaseDatabase.getReference("Users/" + postUserId)
-                                                .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                        if (snapshot.exists()) {
-                                                            User user = snapshot.getValue(User.class);
-                                                            String postUserName = user.getUsername();
-                                                            String postUserIcon = user.getProfileImg();
+            String todayDate = privateStorage.dateTime(System.currentTimeMillis());
+            firebaseDatabase.getReference("Posts")
+                    .orderByChild("postDate").equalTo(todayDate.substring(0, todayDate.lastIndexOf(" ")))
+                    .limitToLast(loadLimit)
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                postModelArrayList.clear();
+                                postRecycler.setVisibility(View.VISIBLE);
+                                postNoExists.setVisibility(View.GONE);
+                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                    Post post = dataSnapshot.getValue(Post.class);
+                                    String postId = dataSnapshot.getKey();
+                                    String postUserId = post.getPostUserId();
+                                    firebaseDatabase.getReference("Users/" + postUserId)
+                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if (snapshot.exists()) {
+                                                        User user = snapshot.getValue(User.class);
+                                                        String postUserName = user.getUsername();
+                                                        String postUserIcon = user.getProfileImg();
 
-                                                            postModelArrayList.add(new HomePostModel(postId, postUserId, postUserName, postUserIcon, post.getPostTitle(), post.getPostImageUrl(), "2342", "983"));
+                                                        postModelArrayList.add(new HomePostModel(postId, postUserId, postUserName, postUserIcon, post.getPostTitle(), post.getPostImageUrl(), "2342", "983"));
 
-                                                            postAdapter.notifyDataSetChanged();
-                                                        }
-
+                                                        postAdapter.notifyDataSetChanged();
                                                     }
 
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError error) {
+                                                }
 
-                                                    }
-                                                });
-                                    }
-                                } else {
-                                    postNoExists.setVisibility(View.VISIBLE);
-                                    postRecycler.setVisibility(View.GONE);
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
                                 }
+                                loadLimit +=5;
+                            } else {
+                                postNoExists.setVisibility(View.VISIBLE);
+                                postRecycler.setVisibility(View.GONE);
                             }
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                            }
-                        });
+                        }
+                    });
 
-                break;
-            case POST_MEMBERS:
+        } else if (postType == POST_TOP_LIKE) {
 
-                firebaseDatabase.getReference("Users")
-                        .orderByChild("members").equalTo(privateStorage.userDetail().put(USER_ID, null))
-                        .limitToLast(loadLimit)
-                        .addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot.exists()) {
-                                    postModelArrayList.clear();
-                                    postRecycler.setVisibility(View.VISIBLE);
-                                    postNoExists.setVisibility(View.GONE);
-                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                        User user = dataSnapshot.getValue(User.class);
-                                        String userId = dataSnapshot.getKey();
-                                        String postUserName = user.getUsername();
-                                        String postUserIcon = user.getProfileImg();
+        } else if (postType == POST_YESTERDAY) {
 
 
-                                        firebaseDatabase.getReference("Posts")
-                                                .orderByChild("postUserId").equalTo(userId)
-                                                .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                        if (snapshot.exists()) {
-                                                            Post post = snapshot.getValue(Post.class);
-                                                            String postId = snapshot.getKey();
-                                                            String postTitle = post.getPostTitle();
-                                                            String postImageUrl = post.getPostImageUrl();
+            String yesterdayDate = privateStorage.dateTime(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
 
-                                                            postModelArrayList.add(new HomePostModel(postId, userId, postUserName, postUserIcon, postTitle, postImageUrl, "00", "00"));
+            firebaseDatabase.getReference("Posts")
+                    .orderByChild("postDate").equalTo(yesterdayDate.substring(0, yesterdayDate.lastIndexOf(" ")))
+                    .limitToLast(loadLimit)
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                postModelArrayList.clear();
+                                postRecycler.setVisibility(View.VISIBLE);
+                                postNoExists.setVisibility(View.GONE);
+                                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                    Post post = dataSnapshot.getValue(Post.class);
+                                    String postId = dataSnapshot.getKey();
+                                    String postUserId = post.getPostUserId();
+                                    firebaseDatabase.getReference("Users/" + postUserId)
+                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    if (snapshot.exists()) {
+                                                        User user = snapshot.getValue(User.class);
+                                                        String postUserName = user.getUsername();
+                                                        String postUserIcon = user.getProfileImg();
 
-                                                            postAdapter.notifyDataSetChanged();
+                                                        postModelArrayList.add(new HomePostModel(postId, postUserId, postUserName, postUserIcon, post.getPostTitle(), post.getPostImageUrl(), "2342", "983"));
 
-                                                        }
+                                                        postAdapter.notifyDataSetChanged();
                                                     }
 
-                                                    @Override
-                                                    public void onCancelled(@NonNull DatabaseError error) {
+                                                }
 
-                                                    }
-                                                });
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
 
-
-                                    }
-                                } else {
-                                    postNoExists.setVisibility(View.VISIBLE);
-                                    postRecycler.setVisibility(View.GONE);
+                                                }
+                                            });
                                 }
+                                loadLimit +=5;
+                            } else {
+                                postNoExists.setVisibility(View.VISIBLE);
+                                postRecycler.setVisibility(View.GONE);
                             }
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                            }
-                        });
+                        }
+                    });
 
 
-                break;
-
-            case POST_TOP_LIKE:
-
-                break;
-
-            case POST_YESTERDAY:
-
-                break;
-
-            default:
-                break;
         }
 
 
