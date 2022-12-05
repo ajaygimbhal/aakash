@@ -277,6 +277,63 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                 menuPopupHelper.show();
             });
+
+            firebaseDatabase.getReference("Posts/" + homePostModel.getPostId() + "/likes")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            int likeCount = (int) snapshot.getChildrenCount();
+                            String likeString;
+                            if (likeCount > 1) {
+                                if (likeCount > 9) {
+                                    likeString = "Likes(" + likeCount + ")";
+                                } else {
+                                    likeString = "Likes(0" + likeCount + ")";
+                                }
+
+                            } else {
+                                likeString = "Like(0" + likeCount + ")";
+                            }
+                            binding.likeBtn.setText(likeString);
+
+                            firebaseDatabase.getReference("Posts/" + homePostModel.getPostId() + "/likes/" + privateStorage.userDetail().put(USER_ID, null))
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if (snapshot.exists()) {
+                                                binding.likeBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_fill, 0, 0, 0);
+
+                                                binding.likeBtn.setOnClickListener(view -> {
+                                                    firebaseDatabase.getReference("Posts/" + homePostModel.getPostId() + "/likes")
+                                                            .child(privateStorage.userDetail().put(USER_ID, null))
+                                                            .removeValue();
+                                                });
+
+                                            } else {
+                                                binding.likeBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up, 0, 0, 0);
+
+                                                binding.likeBtn.setOnClickListener(view -> {
+                                                    firebaseDatabase.getReference("Posts/" + homePostModel.getPostId() + "/likes")
+                                                            .child(privateStorage.userDetail().put(USER_ID, null))
+                                                            .child("likeAt")
+                                                            .setValue(System.currentTimeMillis());
+                                                });
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
         }
 
     }
