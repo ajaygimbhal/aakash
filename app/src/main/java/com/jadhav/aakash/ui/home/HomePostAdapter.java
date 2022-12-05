@@ -1,5 +1,7 @@
 package com.jadhav.aakash.ui.home;
 
+import static com.jadhav.aakash.supports.PrivateStorage.USER_ID;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -9,16 +11,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.jadhav.aakash.activities.CommentActivity;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.jadhav.aakash.R;
+import com.jadhav.aakash.activities.CommentActivity;
 import com.jadhav.aakash.databinding.PostCardViewBinding;
+import com.jadhav.aakash.supports.PrivateStorage;
+import com.jadhav.aakash.supports.Toasty;
+import com.jadhav.aakash.supports.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -29,6 +37,8 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int REAL_POST = 2;
     ArrayList<HomePostModel> modelArrayList;
     Context context;
+    FirebaseDatabase firebaseDatabase;
+    PrivateStorage privateStorage;
 
 
     public HomePostAdapter(ArrayList<HomePostModel> modelArrayList, Context context) {
@@ -55,7 +65,7 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case SAMPLE_POST:
                 break;
             case REAL_POST:
-                ((HomePostHolder) holder).setPostData(modelArrayList.get(position));
+                ((HomePostHolder) holder).setPostData(modelArrayList.get(position), position);
                 break;
         }
 
@@ -92,20 +102,44 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public HomePostHolder(@NonNull View itemView) {
             super(itemView);
             binding = PostCardViewBinding.bind(itemView);
+            firebaseDatabase = FirebaseDatabase.getInstance();
+            privateStorage = new PrivateStorage(context);
         }
 
         @SuppressLint("ResourceType")
-        public void setPostData(HomePostModel homePostModel) {
+        public void setPostData(HomePostModel homePostModel, int position) {
 
             if (!homePostModel.getPostTitle().equals("")) {
                 binding.postTitle.setVisibility(View.VISIBLE);
                 binding.postTitle.setText(homePostModel.getPostTitle());
             }
 
-            Picasso.get().load(homePostModel.getPostUserIcon()).into(binding.postUserIcon);
+            firebaseDatabase.getReference("Users/" + homePostModel.getPostUserId())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public synchronized void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                User user = snapshot.getValue(User.class);
+                                String postUserName = user.getUsername();
+                                String postUserIcon = user.getProfileImg();
+                                modelArrayList.get(position).setPostUsername(postUserName);
+                                modelArrayList.get(position).setPostUserIcon(postUserIcon);
+                                Picasso.get().load(homePostModel.getPostUserIcon()).into(binding.postUserIcon);
+                                binding.postUsername.setText(homePostModel.getPostUsername());
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+
             Picasso.get().load(homePostModel.getPostImg()).into(binding.postImg);
 
-            binding.postUsername.setText(homePostModel.getPostUsername());
 
             binding.commentBtn.setOnClickListener(view -> {
                 Intent intent = new Intent(context, CommentActivity.class);
@@ -121,7 +155,26 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 inflater.inflate(R.menu.post_more_menu, menuBuilder);
 
                 MenuPopupHelper menuPopupHelper = new MenuPopupHelper(context, menuBuilder, view1);
-                menuBuilder.getItem(0).setTitle("Member Cancel");
+
+
+                firebaseDatabase.getReference("Users/" + homePostModel.getPostUserId() + "/members/" + privateStorage.userDetail().put(USER_ID, null))
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    menuBuilder.getItem(0).setTitle("Cancel Member");
+                                } else if (homePostModel.getPostUserId().equals(privateStorage.userDetail().put(USER_ID, null))) {
+                                    menuBuilder.getItem(0).setTitle("Self Member");
+                                } else {
+                                    menuBuilder.getItem(0).setTitle("Join Member");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
 
                 menuPopupHelper.setForceShowIcon(true);
                 menuPopupHelper.setGravity(Gravity.BOTTOM);
@@ -129,7 +182,90 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 menuBuilder.setCallback(new MenuBuilder.Callback() {
                     @Override
                     public boolean onMenuItemSelected(@NonNull MenuBuilder menu, @NonNull MenuItem item) {
-                        Toast.makeText(context, "You Clicked " + item.getTitle(), Toast.LENGTH_SHORT).show();
+                        switch (item.getItemId()) {
+                            case R.id.memberOptBtn:
+                                if (privateStorage.isConnectedToInternet()) {
+                                    // member count //
+                                    firebaseDatabase.getReference("Users/" + homePostModel.getPostUserId() + "/members/")
+                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                                    long membersCount = snapshot.getChildrenCount();
+                                                    // exists member check
+                                                    firebaseDatabase.getReference("Users/" + homePostModel.getPostUserId() + "/members/" + privateStorage.userDetail().put(USER_ID, null))
+                                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                    if (snapshot.exists()) {
+
+                                                                        firebaseDatabase.getReference("Users")
+                                                                                .child(homePostModel.getPostUserId())
+                                                                                .child("members")
+                                                                                .child(privateStorage.userDetail().put(USER_ID, null))
+                                                                                .removeValue()
+                                                                                .addOnSuccessListener(unused -> {
+                                                                                    firebaseDatabase.getReference("Users")
+                                                                                            .child(homePostModel.getPostUserId())
+                                                                                            .child("memberCount")
+                                                                                            .setValue(membersCount - 1)
+                                                                                            .addOnSuccessListener(unused1 -> {
+                                                                                                Toasty.Message(context, "Cancel by " + homePostModel.getPostUsername() + " Successfully.");
+                                                                                            }).addOnFailureListener(e -> {
+                                                                                                Toasty.Message(context, "Cancel by " + homePostModel.getPostUsername() + " Failed.");
+                                                                                            });
+                                                                                }).addOnFailureListener(e -> {
+                                                                                    Toasty.Message(context, "Failed");
+                                                                                });
+                                                                    } else if (homePostModel.getPostUserId().equals(privateStorage.userDetail().put(USER_ID, null))) {
+                                                                        Toasty.Message(context, "Sorry Your Are Self Post Member");
+                                                                    } else {
+
+                                                                        String memberAt = String.valueOf(System.currentTimeMillis());
+                                                                        firebaseDatabase.getReference("Users")
+                                                                                .child(homePostModel.getPostUserId())
+                                                                                .child("members")
+                                                                                .child(privateStorage.userDetail().put(USER_ID, null))
+                                                                                .child("memberAt")
+                                                                                .setValue(memberAt)
+                                                                                .addOnSuccessListener(unused -> {
+                                                                                    firebaseDatabase.getReference("Users")
+                                                                                            .child(homePostModel.getPostUserId())
+                                                                                            .child("memberCount")
+                                                                                            .setValue(membersCount + 1)
+                                                                                            .addOnSuccessListener(unused1 -> {
+                                                                                                Toasty.Message(context, "Member by " + homePostModel.getPostUsername() + " Successfully.");
+                                                                                            }).addOnFailureListener(e -> {
+                                                                                                Toasty.Message(context, "Member by " + homePostModel.getPostUsername() + " Failed.");
+                                                                                            });
+                                                                                }).addOnFailureListener(e -> {
+                                                                                    Toasty.Message(context, "Failed");
+                                                                                });
+
+                                                                    }
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                                }
+                                                            });
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+
+
+                                } else {
+                                    Toasty.Message(context, "Enable Internet Connection.");
+                                }
+
+                                return true;
+                        }
                         return false;
                     }
 

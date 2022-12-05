@@ -52,6 +52,8 @@
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/active_post_filter_view_bg.xml" value="0.2025" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/ic_baseline_delete.xml" value="0.2115" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/ic_baseline_edit.xml" value="0.2025" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/ic_baseline_thumb_up.xml" value="0.2025" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/ic_baseline_thumb_up_fill.xml" value="0.2025" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/post_filter_view_bg.xml" value="0.2025" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/post_more_options_bg.xml" value="0.2105" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/drawable/sample_friend_icon_bg.xml" value="0.2115" />
@@ -76,6 +78,7 @@
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/sample_profile_member_card_view.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/layout/sample_profile_post_card_view.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/menu/bottom_nav_menu.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/menu/post_more_menu.xml" value="0.1675213675213675" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/menu/post_more_options.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Ajay/AndroidStudioProjects/aakash/app/src/main/res/menu/profile_menu.xml" value="0.20416666666666666" />
       </map>

@@ -49,8 +49,6 @@ public class HomeFragment extends Fragment {
     private PrivateStorage privateStorage;
     private int loadLimit = 5;
 
-    String postUserName, postUserIcon;
-
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 
@@ -144,26 +142,8 @@ public class HomeFragment extends Fragment {
                                     Post post = dataSnapshot.getValue(Post.class);
                                     String postId = dataSnapshot.getKey();
                                     String postUserId = post.getPostUserId();
-                                    firebaseDatabase.getReference("Users/" + postUserId)
-                                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public synchronized void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    if (snapshot.exists()) {
-                                                        User user = snapshot.getValue(User.class);
-                                                        postUserName = user.getUsername();
-                                                        postUserIcon = user.getProfileImg();
 
-                                                    }
-
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                                }
-                                            });
-
-                                    postModelArrayList.add(new HomePostModel(postId, postUserId, postUserName, postUserIcon, post.getPostTitle(), post.getPostImageUrl(), "2342", "983"));
+                                    postModelArrayList.add(new HomePostModel(postId, postUserId, null, null, post.getPostTitle(), post.getPostImageUrl(), "2342", "983"));
                                 }
                                 loadLimit +=5;
                                 Collections.reverse(postModelArrayList);

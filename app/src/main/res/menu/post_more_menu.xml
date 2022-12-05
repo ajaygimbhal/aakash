@@ -8,10 +8,6 @@
         app:showAsAction="never"
         android:icon="@drawable/ic_baseline_friends" />
 
-    <item
-        android:id="@+id/profileOptBtn"
-        android:title="Show Profile"
-        app:showAsAction="never"
-        android:icon="@drawable/ic_baseline_profile"/>
+
 
 </menu>
