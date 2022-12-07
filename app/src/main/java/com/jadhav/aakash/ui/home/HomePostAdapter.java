@@ -65,7 +65,7 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             case SAMPLE_POST:
                 break;
             case REAL_POST:
-                ((HomePostHolder) holder).setPostData(modelArrayList.get(position), position);
+                ((HomePostHolder) holder).setPostData(modelArrayList.get(position));
                 break;
         }
 
@@ -107,7 +107,7 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
         @SuppressLint("ResourceType")
-        public void setPostData(HomePostModel homePostModel, int position) {
+        public void setPostData(HomePostModel homePostModel) {
 
             if (!homePostModel.getPostTitle().equals("")) {
                 binding.postTitle.setVisibility(View.VISIBLE);
@@ -122,8 +122,8 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 User user = snapshot.getValue(User.class);
                                 String postUserName = user.getUsername();
                                 String postUserIcon = user.getProfileImg();
-                                modelArrayList.get(position).setPostUsername(postUserName);
-                                modelArrayList.get(position).setPostUserIcon(postUserIcon);
+                                homePostModel.setPostUsername(postUserName);
+                                homePostModel.setPostUserIcon(postUserIcon);
                                 Picasso.get().load(homePostModel.getPostUserIcon()).into(binding.postUserIcon);
                                 binding.postUsername.setText(homePostModel.getPostUsername());
 
@@ -278,11 +278,14 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 menuPopupHelper.show();
             });
 
+            // post like code below //
             firebaseDatabase.getReference("Posts/" + homePostModel.getPostId() + "/likes")
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             int likeCount = (int) snapshot.getChildrenCount();
+
+                            homePostModel.setPostLikeCount(likeCount);
                             String likeString;
                             if (likeCount > 1) {
                                 if (likeCount > 9) {
@@ -304,19 +307,39 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                                 binding.likeBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_fill, 0, 0, 0);
 
                                                 binding.likeBtn.setOnClickListener(view -> {
-                                                    firebaseDatabase.getReference("Posts/" + homePostModel.getPostId() + "/likes")
-                                                            .child(privateStorage.userDetail().put(USER_ID, null))
-                                                            .removeValue();
+                                                    if (privateStorage.isConnectedToInternet()) {
+
+                                                        firebaseDatabase.getReference("Posts/" + homePostModel.getPostId() + "/likes")
+                                                                .child(privateStorage.userDetail().put(USER_ID, null))
+                                                                .removeValue()
+                                                                .addOnSuccessListener(unused -> {
+                                                                    firebaseDatabase.getReference("Posts/" + homePostModel.getPostId())
+                                                                            .child("likesCount")
+                                                                            .setValue(likeCount - 1);
+                                                                });
+                                                    } else {
+                                                        Toasty.Message(context, "Internet Connection Enable.");
+                                                    }
                                                 });
 
                                             } else {
                                                 binding.likeBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up, 0, 0, 0);
 
                                                 binding.likeBtn.setOnClickListener(view -> {
-                                                    firebaseDatabase.getReference("Posts/" + homePostModel.getPostId() + "/likes")
-                                                            .child(privateStorage.userDetail().put(USER_ID, null))
-                                                            .child("likeAt")
-                                                            .setValue(System.currentTimeMillis());
+
+                                                    if (privateStorage.isConnectedToInternet()) {
+                                                        firebaseDatabase.getReference("Posts/" + homePostModel.getPostId() + "/likes")
+                                                                .child(privateStorage.userDetail().put(USER_ID, null))
+                                                                .child("likeAt")
+                                                                .setValue(System.currentTimeMillis())
+                                                                .addOnSuccessListener(unused -> {
+                                                                    firebaseDatabase.getReference("Posts/" + homePostModel.getPostId())
+                                                                            .child("likesCount")
+                                                                            .setValue(likeCount + 1);
+                                                                });
+                                                    } else {
+                                                        Toasty.Message(context, "Internet Connection Enable.");
+                                                    }
                                                 });
                                             }
                                         }
@@ -334,6 +357,40 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         }
                     });
 
+            // post comment Count //
+            firebaseDatabase.getReference("Posts/" + homePostModel.getPostId() + "/comments")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            int commentCount = (int) snapshot.getChildrenCount();
+
+                            homePostModel.setPostCommentCount(commentCount);
+                            String likeString;
+                            if (commentCount > 1) {
+                                if (commentCount > 9) {
+                                    likeString = "Comments(" + commentCount + ")";
+                                } else {
+                                    likeString = "Comments(0" + commentCount + ")";
+                                }
+
+                            } else {
+                                likeString = "Comment(0" + commentCount + ")";
+                            }
+                            binding.commentBtn.setText(likeString);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+            // post comment open activity
+            binding.commentBtn.setOnClickListener(view -> {
+                Intent intent = new Intent(context, CommentActivity.class);
+                intent.putExtra("postId", homePostModel.getPostId());
+                context.startActivity(intent);
+            });
         }
 
     }

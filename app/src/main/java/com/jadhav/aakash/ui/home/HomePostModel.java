@@ -11,18 +11,14 @@ public class HomePostModel {
     private String postUserIcon;
     private String postTitle;
     private String postImg;
-    private String postLikeCount;
-    private String postCommentCount;
+    private int postLikeCount;
+    private int postCommentCount;
 
-    public HomePostModel(String postId, String postUserId, String postUsername, String postUserIcon, String postTitle, String postImg, String postLikeCount, String postCommentCount) {
+    public HomePostModel(String postId, String postUserId, String postTitle, String postImg) {
         this.postId = postId;
         this.postUserId = postUserId;
-        this.postUsername = postUsername;
-        this.postUserIcon = postUserIcon;
         this.postTitle = postTitle;
         this.postImg = postImg;
-        this.postLikeCount = postLikeCount;
-        this.postCommentCount = postCommentCount;
     }
 
     public String getPostUserIcon() {
@@ -73,19 +69,19 @@ public class HomePostModel {
         this.postImg = postImg;
     }
 
-    public String getPostLikeCount() {
+    public int getPostLikeCount() {
         return postLikeCount;
     }
 
-    public void setPostLikeCount(String postLikeCount) {
+    public void setPostLikeCount(int postLikeCount) {
         this.postLikeCount = postLikeCount;
     }
 
-    public String getPostCommentCount() {
+    public int getPostCommentCount() {
         return postCommentCount;
     }
 
-    public void setPostCommentCount(String postCommentCount) {
+    public void setPostCommentCount(int postCommentCount) {
         this.postCommentCount = postCommentCount;
     }
 }
