@@ -143,7 +143,7 @@ public class CompressImage {
         if (!file.exists()) {
             file.mkdirs();
         }
-        String uriSting = (file.getAbsolutePath() + "/current-upload-"+context.getResources().getString(R.string.app_name)+"-app.jpeg");
+        String uriSting = (file.getAbsolutePath() + "/current-upload-"+context.getResources().getString(R.string.app_name)+"-app.jpg");
         return uriSting;
 
     }

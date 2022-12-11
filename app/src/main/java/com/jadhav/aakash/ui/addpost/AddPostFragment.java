@@ -158,7 +158,7 @@ public class AddPostFragment extends Fragment {
 
             progressDialog.show();
             String postId = firebaseDatabase.getReference().child("Posts").push().getKey();
-            String imageNameGen = "post-" + postId + ".jpeg";
+            String imageNameGen = "post-" + postId + ".jpg";
             Log.d(TAG, "uploadPost: " + imageNameGen);
 
             StorageReference riversRef = firebaseStorage.getReference().child("PostImage/" + imageNameGen);

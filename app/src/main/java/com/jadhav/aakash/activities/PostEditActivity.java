@@ -192,7 +192,7 @@ public class PostEditActivity extends AppCompatActivity {
         progressDialog.show();
         if (postImageUrl != null) {
 
-            String imageName = "post-" + postId + ".jpeg";
+            String imageName = "post-" + postId + ".jpg";
             Log.d(TAG, "editUploadPost: " + imageName);
 
             StorageReference riversRef = firebaseStorage.getReference().child("PostImage/" + imageName);

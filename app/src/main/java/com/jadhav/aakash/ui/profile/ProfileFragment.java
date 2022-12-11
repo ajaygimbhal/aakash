@@ -321,7 +321,7 @@ public class ProfileFragment extends Fragment {
 
                 progressDialog.show();
 
-                StorageReference imagesRef = firebaseStorage.getReference().child("ProfileImg/" + privateStorage.userDetail().put(USER_ID, null) + ".jpeg");
+                StorageReference imagesRef = firebaseStorage.getReference().child("ProfileImg/" + privateStorage.userDetail().put(USER_ID, null) + ".jpg");
 
                 Bitmap bitmap = BitmapFactory.decodeFile(new CompressImage(getContext()).compressImages(selectedImage));
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -330,7 +330,7 @@ public class ProfileFragment extends Fragment {
                 UploadTask uploadTask = imagesRef.putBytes(bytes);
                 uploadTask.addOnSuccessListener(taskSnapshot -> {
 
-                    firebaseStorage.getReference().child("ProfileImg/" + privateStorage.userDetail().put(USER_ID, null) + ".png").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    firebaseStorage.getReference().child("ProfileImg/" + privateStorage.userDetail().put(USER_ID, null) + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
                             firebaseDatabase.getReference("Users/" + privateStorage.userDetail().put(USER_ID, null))

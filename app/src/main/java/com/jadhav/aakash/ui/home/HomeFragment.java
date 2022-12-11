@@ -49,7 +49,7 @@ public class HomeFragment extends Fragment {
     private FirebaseDatabase firebaseDatabase;
     private PrivateStorage privateStorage;
     private int loadLimit = 5;
-    private int totalPostCount = 0;
+    private int totalPostCount = 10;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
