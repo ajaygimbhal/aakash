@@ -8,6 +8,9 @@ public class Comment {
     private String comment;
     private String commentAt;
 
+    public Comment() {
+    }
+
     public Comment(String toUserId, String comment, String commentAt) {
         this.toUserId = toUserId;
         this.comment = comment;
