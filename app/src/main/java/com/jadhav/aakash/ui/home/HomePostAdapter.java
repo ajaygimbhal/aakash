@@ -365,18 +365,18 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             int commentCount = (int) snapshot.getChildrenCount();
 
                             homePostModel.setPostCommentCount(commentCount);
-                            String likeString;
+                            String commentString;
                             if (commentCount > 1) {
                                 if (commentCount > 9) {
-                                    likeString = "Comments(" + commentCount + ")";
+                                    commentString = "Comments(" + commentCount + ")";
                                 } else {
-                                    likeString = "Comments(0" + commentCount + ")";
+                                    commentString = "Comments(0" + commentCount + ")";
                                 }
 
                             } else {
-                                likeString = "Comment(0" + commentCount + ")";
+                                commentString = "Comment(0" + commentCount + ")";
                             }
-                            binding.commentBtn.setText(likeString);
+                            binding.commentBtn.setText(commentString);
                         }
 
                         @Override

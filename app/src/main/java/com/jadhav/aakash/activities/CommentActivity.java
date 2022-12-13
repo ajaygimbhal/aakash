@@ -11,8 +11,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
@@ -23,9 +21,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.jadhav.aakash.R;
 import com.jadhav.aakash.databinding.ActivityCommentBinding;
 import com.jadhav.aakash.supports.Comment;
-import com.jadhav.aakash.supports.FullScreen;
 import com.jadhav.aakash.supports.Post;
 import com.jadhav.aakash.supports.PrivateStorage;
 import com.jadhav.aakash.supports.Toasty;
@@ -46,8 +44,7 @@ public class CommentActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     ArrayList<CommentModel> commentModelList = new ArrayList<>();
     CommentAdapter commentAdapter;
-    FullScreen fullScreen;
-    View view;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +52,6 @@ public class CommentActivity extends AppCompatActivity {
         binding = ActivityCommentBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         getSupportActionBar().hide();
-
 
 
         progressDialog = new ProgressDialog(this);
@@ -84,34 +80,7 @@ public class CommentActivity extends AppCompatActivity {
             }
         }
 
-        firebaseDatabase.getReference("Posts/" + postId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            Post post = snapshot.getValue(Post.class);
-                            String postTitle = post.getPostTitle();
-                            String postImage = post.getPostImageUrl();
-                            if (postTitle != "") {
-                                binding.cPostTitle.setVisibility(View.VISIBLE);
-                                binding.cPostTitle.setText(postTitle);
-                            }
-                            Picasso.get().load(postImage).into(binding.cPostThumbnail);
-
-                            // likes and comments count code write here ... //
-
-                        } else {
-                            Toasty.Message(getApplicationContext(), "Not Found");
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-
+        postLoad();
         binding.cCommentBoxOpen.setOnClickListener(view -> {
             binding.cCommentBoxOpenView.setVisibility(View.VISIBLE);
             binding.cCommentInputBox.setVisibility(View.VISIBLE);
@@ -122,10 +91,8 @@ public class CommentActivity extends AppCompatActivity {
 
         binding.cCommentBoxOpenView.setOnClickListener(view -> {
             binding.cCommentInputBox.setVisibility(View.GONE);
-            if (this.getCurrentFocus() != null) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             binding.cCommentBoxOpenView.setVisibility(View.GONE);
         });
 
@@ -155,6 +122,144 @@ public class CommentActivity extends AppCompatActivity {
 
     }
 
+    private void postLoad() {
+
+        firebaseDatabase.getReference("Posts/" + postId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            Post post = snapshot.getValue(Post.class);
+                            String postTitle = post.getPostTitle();
+                            String postImage = post.getPostImageUrl();
+                            if (postTitle != "") {
+                                binding.cPostTitle.setVisibility(View.VISIBLE);
+                                binding.cPostTitle.setText(postTitle);
+                            }
+                            Picasso.get().load(postImage).into(binding.cPostThumbnail);
+
+
+                            // post like code below //
+                            firebaseDatabase.getReference("Posts/" + postId + "/likes")
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            int likeCount = (int) snapshot.getChildrenCount();
+
+                                            String likeString;
+                                            if (likeCount > 1) {
+                                                if (likeCount > 9) {
+                                                    likeString = "Likes(" + likeCount + ")";
+                                                } else {
+                                                    likeString = "Likes(0" + likeCount + ")";
+                                                }
+
+                                            } else {
+                                                likeString = "Like(0" + likeCount + ")";
+                                            }
+                                            binding.likeBtn.setText(likeString);
+
+                                            firebaseDatabase.getReference("Posts/" + postId + "/likes/" + privateStorage.userDetail().put(USER_ID, null))
+                                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                            if (snapshot.exists()) {
+                                                                binding.likeBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up_fill, 0, 0, 0);
+
+                                                                binding.likeBtn.setOnClickListener(view -> {
+                                                                    if (privateStorage.isConnectedToInternet()) {
+
+                                                                        firebaseDatabase.getReference("Posts/" + postId + "/likes")
+                                                                                .child(privateStorage.userDetail().put(USER_ID, null))
+                                                                                .removeValue()
+                                                                                .addOnSuccessListener(unused -> {
+                                                                                    firebaseDatabase.getReference("Posts/" + postId)
+                                                                                            .child("likesCount")
+                                                                                            .setValue(likeCount - 1);
+                                                                                });
+                                                                        postLoad();
+                                                                    } else {
+                                                                        Toasty.Message(getApplicationContext(), "Internet Connection Enable.");
+                                                                    }
+                                                                });
+
+                                                            } else {
+                                                                binding.likeBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_thumb_up, 0, 0, 0);
+
+                                                                binding.likeBtn.setOnClickListener(view -> {
+
+                                                                    if (privateStorage.isConnectedToInternet()) {
+                                                                        firebaseDatabase.getReference("Posts/" + postId + "/likes")
+                                                                                .child(privateStorage.userDetail().put(USER_ID, null))
+                                                                                .child("likeAt")
+                                                                                .setValue(System.currentTimeMillis())
+                                                                                .addOnSuccessListener(unused -> {
+                                                                                    firebaseDatabase.getReference("Posts/" + postId)
+                                                                                            .child("likesCount")
+                                                                                            .setValue(likeCount + 1);
+                                                                                });
+                                                                        postLoad();
+                                                                    } else {
+                                                                        Toasty.Message(getApplicationContext(), "Internet Connection Enable.");
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                                        }
+                                                    });
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+
+                            // post comment Count //
+                            firebaseDatabase.getReference("Posts/" + postId + "/comments")
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            int commentCount = (int) snapshot.getChildrenCount();
+
+                                            String commentString;
+                                            if (commentCount > 1) {
+                                                if (commentCount > 9) {
+                                                    commentString = "Comments(" + commentCount + ")";
+                                                } else {
+                                                    commentString = "Comments(0" + commentCount + ")";
+                                                }
+
+                                            } else {
+                                                commentString = "Comment(0" + commentCount + ")";
+                                            }
+                                            binding.commentBtn.setText(commentString);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
+
+                        } else {
+                            Toasty.Message(getApplicationContext(), "Not Found");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+
+    }
+
     private void loadComments() {
         firebaseDatabase.getReference("Posts/" + postId + "/comments")
                 .addValueEventListener(new ValueEventListener() {
@@ -162,6 +267,8 @@ public class CommentActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             commentModelList.clear();
+                            binding.commentRecyclerView.setVisibility(View.VISIBLE);
+                            binding.commentNoFound.setVisibility(View.GONE);
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                 Comment comment = dataSnapshot.getValue(Comment.class);
                                 String commentId = dataSnapshot.getKey();
@@ -176,7 +283,8 @@ public class CommentActivity extends AppCompatActivity {
                             commentAdapter.notifyDataSetChanged();
 
                         } else {
-                            Toasty.Message(getApplicationContext(), "Any Comment No Found.");
+                            binding.commentRecyclerView.setVisibility(View.GONE);
+                            binding.commentNoFound.setVisibility(View.VISIBLE);
                         }
                     }
 
@@ -212,7 +320,7 @@ public class CommentActivity extends AppCompatActivity {
                                                         .setValue(commentsCount + 1);
                                                 binding.cCommentInputBox.setVisibility(View.GONE);
                                                 binding.cComment.setText("");
-                                                if (getCurrentFocus() != null) {
+                                                if ((View)getCurrentFocus() != null) {
                                                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                                                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                                                 }
