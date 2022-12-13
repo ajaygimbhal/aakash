@@ -11,6 +11,8 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
@@ -23,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jadhav.aakash.databinding.ActivityCommentBinding;
 import com.jadhav.aakash.supports.Comment;
+import com.jadhav.aakash.supports.FullScreen;
 import com.jadhav.aakash.supports.Post;
 import com.jadhav.aakash.supports.PrivateStorage;
 import com.jadhav.aakash.supports.Toasty;
@@ -43,6 +46,8 @@ public class CommentActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     ArrayList<CommentModel> commentModelList = new ArrayList<>();
     CommentAdapter commentAdapter;
+    FullScreen fullScreen;
+    View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +55,8 @@ public class CommentActivity extends AppCompatActivity {
         binding = ActivityCommentBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         getSupportActionBar().hide();
+
+
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Comment Adding...");
@@ -106,18 +113,20 @@ public class CommentActivity extends AppCompatActivity {
 
 
         binding.cCommentBoxOpen.setOnClickListener(view -> {
+            binding.cCommentBoxOpenView.setVisibility(View.VISIBLE);
             binding.cCommentInputBox.setVisibility(View.VISIBLE);
             binding.cComment.requestFocus();
             InputMethodManager imm = (InputMethodManager) getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
             imm.showSoftInput(binding.cComment, InputMethodManager.SHOW_FORCED);
         });
 
-        binding.cCommentBoxClose.setOnClickListener(view -> {
+        binding.cCommentBoxOpenView.setOnClickListener(view -> {
             binding.cCommentInputBox.setVisibility(View.GONE);
             if (this.getCurrentFocus() != null) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
+            binding.cCommentBoxOpenView.setVisibility(View.GONE);
         });
 
         binding.cBoxClose.setOnClickListener(view -> {
@@ -135,6 +144,7 @@ public class CommentActivity extends AppCompatActivity {
         LinearLayoutManager manager = new LinearLayoutManager(getApplicationContext());
         binding.commentRecyclerView.setLayoutManager(manager);
         binding.commentRecyclerView.setAdapter(commentAdapter);
+        binding.commentRecyclerView.setNestedScrollingEnabled(false);
 
         loadComments();
 
@@ -202,10 +212,11 @@ public class CommentActivity extends AppCompatActivity {
                                                         .setValue(commentsCount + 1);
                                                 binding.cCommentInputBox.setVisibility(View.GONE);
                                                 binding.cComment.setText("");
-                                                if ((View) getCurrentFocus() != null) {
+                                                if (getCurrentFocus() != null) {
                                                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                                    imm.hideSoftInputFromWindow(((View) getCurrentFocus()).getWindowToken(), 0);
+                                                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                                                 }
+                                                binding.cCommentBoxOpenView.setVisibility(View.GONE);
 
                                                 progressDialog.dismiss();
                                                 Toasty.Message(getApplicationContext(), "Comment Added Success.");
