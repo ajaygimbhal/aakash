@@ -332,7 +332,10 @@ public class HomeFragment extends Fragment {
                         }
                     });
 
+        }
 
+        if (totalPostCount < postModelArrayList.size()){
+            loadLimit =- 5;
         }
 
 
