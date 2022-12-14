@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.jadhav.aakash.R;
 import com.jadhav.aakash.databinding.ActivityCommentBinding;
 import com.jadhav.aakash.supports.Comment;
+import com.jadhav.aakash.supports.Notification;
 import com.jadhav.aakash.supports.Post;
 import com.jadhav.aakash.supports.PrivateStorage;
 import com.jadhav.aakash.supports.Toasty;
@@ -92,16 +93,14 @@ public class CommentActivity extends AppCompatActivity {
         binding.cCommentBoxOpenView.setOnClickListener(view -> {
             binding.cCommentInputBox.setVisibility(View.GONE);
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(binding.cComment.getWindowToken(), 0);
             binding.cCommentBoxOpenView.setVisibility(View.GONE);
         });
 
         binding.cBoxClose.setOnClickListener(view -> {
             binding.cCommentInputBox.setVisibility(View.GONE);
-            if (this.getCurrentFocus() != null) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(binding.cComment.getWindowToken(), 0);
             super.onBackPressed();
             finish();
 
@@ -315,11 +314,40 @@ public class CommentActivity extends AppCompatActivity {
                                                         .setValue(commentsCount + 1);
                                                 binding.cCommentInputBox.setVisibility(View.GONE);
                                                 binding.cComment.setText("");
-                                                if ((View) getCurrentFocus() != null) {
-                                                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                                                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                                                }
+                                                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                                imm.hideSoftInputFromWindow(binding.cComment.getWindowToken(), 0);
                                                 binding.cCommentBoxOpenView.setVisibility(View.GONE);
+
+                                                firebaseDatabase.getReference("Posts/" + postId + "/postUserId/")
+                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                if (snapshot.exists()) {
+                                                                    String nId = firebaseDatabase.getReference("Notifications").push().getKey();
+                                                                    String nType = "Comment";
+                                                                    String nToUserId = userId;
+                                                                    String nFromUserId = snapshot.getValue().toString();
+                                                                    String nPostId = postId;
+                                                                    String nMessage = commentText;
+                                                                    String nDate = privateStorage.dateTime(System.currentTimeMillis());
+
+                                                                    if (nFromUserId != nToUserId) {
+
+                                                                        Notification notification = new Notification(nType, nToUserId, nFromUserId, nPostId, nMessage, nDate);
+                                                                        firebaseDatabase.getReference("Notifications")
+                                                                                .child(nId)
+                                                                                .setValue(notification);
+
+                                                                    }
+
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                            }
+                                                        });
 
                                                 progressDialog.dismiss();
                                                 Toasty.Message(getApplicationContext(), "Comment Added Success.");

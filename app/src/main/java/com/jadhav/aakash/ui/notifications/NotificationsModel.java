@@ -1,29 +1,25 @@
 package com.jadhav.aakash.ui.notifications;
 
-import androidx.annotation.Keep;
 
-@Keep
 public class NotificationsModel {
 
     private String notifyId;
     private String notifyType;
-    private String notifyUserIcon;
-    private String notifyUsername;
     private String notifyMessage;
+    private String notifyToUserId;
+    private String notifyFromUserId;
     private String notifyPostId;
-    private String notifyPostImg;
     private String notifyDate;
     private boolean notifyRead;
 
 
-    public NotificationsModel(String notifyId, String notifyType, String notifyUserIcon, String notifyUsername, String notifyMessage, String notifyPostId, String notifyPostImg, String notifyDate, boolean notifyRead) {
+    public NotificationsModel(String notifyId, String notifyType, String notifyMessage, String notifyToUserId, String notifyFromUserId, String notifyPostId, String notifyDate, boolean notifyRead) {
         this.notifyId = notifyId;
         this.notifyType = notifyType;
-        this.notifyUserIcon = notifyUserIcon;
-        this.notifyUsername = notifyUsername;
         this.notifyMessage = notifyMessage;
+        this.notifyToUserId = notifyToUserId;
+        this.notifyFromUserId = notifyFromUserId;
         this.notifyPostId = notifyPostId;
-        this.notifyPostImg = notifyPostImg;
         this.notifyDate = notifyDate;
         this.notifyRead = notifyRead;
     }
@@ -44,22 +40,6 @@ public class NotificationsModel {
         this.notifyType = notifyType;
     }
 
-    public String getNotifyUserIcon() {
-        return notifyUserIcon;
-    }
-
-    public void setNotifyUserIcon(String notifyUserIcon) {
-        this.notifyUserIcon = notifyUserIcon;
-    }
-
-    public String getNotifyUsername() {
-        return notifyUsername;
-    }
-
-    public void setNotifyUsername(String notifyUsername) {
-        this.notifyUsername = notifyUsername;
-    }
-
     public String getNotifyMessage() {
         return notifyMessage;
     }
@@ -68,20 +48,28 @@ public class NotificationsModel {
         this.notifyMessage = notifyMessage;
     }
 
+    public String getNotifyToUserId() {
+        return notifyToUserId;
+    }
+
+    public void setNotifyToUserId(String notifyToUserId) {
+        this.notifyToUserId = notifyToUserId;
+    }
+
+    public String getNotifyFromUserId() {
+        return notifyFromUserId;
+    }
+
+    public void setNotifyFromUserId(String notifyFromUserId) {
+        this.notifyFromUserId = notifyFromUserId;
+    }
+
     public String getNotifyPostId() {
         return notifyPostId;
     }
 
     public void setNotifyPostId(String notifyPostId) {
         this.notifyPostId = notifyPostId;
-    }
-
-    public String getNotifyPostImg() {
-        return notifyPostImg;
-    }
-
-    public void setNotifyPostImg(String notifyPostImg) {
-        this.notifyPostImg = notifyPostImg;
     }
 
     public String getNotifyDate() {

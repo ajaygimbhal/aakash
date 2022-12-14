@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/notificationMainItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="2dp"
@@ -20,17 +17,10 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/nUserIcon"
+            <View
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginStart="2dp"
-                android:layout_marginTop="2dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/aakash_icon"
-                app:civ_border_color="@color/black"
-                app:civ_border_width="1dp" />
-
+                android:background="@drawable/sample_friend_icon_bg" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -39,33 +29,26 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/nUsernameMessage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Username: comment its "
-                    android:textColor="@color/black"
-                    android:textSize="16sp" />
+                <View
+                    android:layout_width="120dp"
+                    android:layout_height="20dp"
+                    android:background="@color/gray_lite"
+                    android:text="Username: comment its " />
 
                 <TextView
-                    android:id="@+id/nTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0 second ago"
-                    android:textSize="12dp" />
+                    android:layout_width="80dp"
+                    android:layout_height="15dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@color/gray_lite" />
 
             </LinearLayout>
 
-
         </LinearLayout>
 
-
-        <ImageView
-            android:id="@+id/nPostThumbnail"
+        <View
             android:layout_width="80dp"
             android:layout_height="50dp"
-            android:scaleType="centerCrop"
-            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+            android:background="@color/gray_lite" />
 
 
     </LinearLayout>

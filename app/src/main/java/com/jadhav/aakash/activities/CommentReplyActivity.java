@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jadhav.aakash.databinding.ActivityCommentReplyBinding;
+import com.jadhav.aakash.supports.Notification;
 import com.jadhav.aakash.supports.PrivateStorage;
 import com.jadhav.aakash.supports.Replies;
 import com.jadhav.aakash.supports.Toasty;
@@ -231,10 +232,10 @@ public class CommentReplyActivity extends AppCompatActivity {
                     String replyId = firebaseDatabase.getReference("Posts/" + postId + "/comments/" + commentId + "/replies/").push().getKey();
                     String toUserId = privateStorage.userDetail().put(USER_ID, null);
                     String fromUserId = oldUserId;
-                    String reply = binding.cReplyComment.getText().toString();
+                    String message = binding.cReplyComment.getText().toString();
                     String rDate = privateStorage.dateTime(System.currentTimeMillis());
 
-                    Replies replies = new Replies(oldCommentId, toUserId, fromUserId, reply, rDate);
+                    Replies replies = new Replies(oldCommentId, toUserId, fromUserId, message, rDate);
                     firebaseDatabase.getReference("Posts/" + postId + "/comments/" + commentId + "/replies/")
                             .child(replyId)
                             .setValue(replies)
@@ -247,6 +248,22 @@ public class CommentReplyActivity extends AppCompatActivity {
                                 InputMethodManager imm = (InputMethodManager) getSystemService(
                                         Context.INPUT_METHOD_SERVICE);
                                 imm.hideSoftInputFromWindow(binding.cReplyComment.getWindowToken(), 0);
+
+                                String nId = firebaseDatabase.getReference("Notifications").push().getKey();
+                                String nType = "Reply";
+                                String nToUserId = userId;
+                                String nFromUserId = fromUserId;
+                                String nPostId = postId;
+                                String nMessage = message;
+                                String nDate = privateStorage.dateTime(System.currentTimeMillis());
+
+                                if (nFromUserId != nToUserId){
+
+                                    Notification notification = new Notification(nType, nToUserId, nFromUserId, nPostId, nMessage, nDate);
+                                    firebaseDatabase.getReference("Notifications")
+                                            .child(nId)
+                                            .setValue(notification);
+                                }
 
                                 progressDialog.dismiss();
                                 Toasty.Message(this, oldUsername + " Reply Successfully.");

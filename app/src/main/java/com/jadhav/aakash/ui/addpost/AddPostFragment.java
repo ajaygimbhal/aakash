@@ -3,7 +3,6 @@ package com.jadhav.aakash.ui.addpost;
 import static com.jadhav.aakash.supports.PrivateStorage.PROFILE_BITMAP_IMAGE;
 import static com.jadhav.aakash.supports.PrivateStorage.USERNAME;
 import static com.jadhav.aakash.supports.PrivateStorage.USER_ID;
-import static com.jadhav.aakash.supports.PrivateStorage.USER_TOTAL_MEMBER;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -36,6 +35,7 @@ import com.google.firebase.storage.UploadTask;
 import com.jadhav.aakash.R;
 import com.jadhav.aakash.databinding.FragmentAddPostBinding;
 import com.jadhav.aakash.supports.CompressImage;
+import com.jadhav.aakash.supports.Notification;
 import com.jadhav.aakash.supports.Post;
 import com.jadhav.aakash.supports.PrivateStorage;
 import com.jadhav.aakash.supports.Toasty;
@@ -181,6 +181,37 @@ public class AddPostFragment extends Fragment {
                                 binding.postSubmitBtn.setEnabled(false);
                                 binding.postSubmitBtn.setBackgroundDrawable(getResources().getDrawable(R.drawable.de_active_button_bg));
                                 postImageUrl = null;
+
+                                String userId = privateStorage.userDetail().put(USER_ID, null);
+                                firebaseDatabase.getReference("Users/" + userId + "/members")
+                                        .addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                if (snapshot.exists()) {
+                                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+
+                                                        String nId = firebaseDatabase.getReference("Notifications").push().getKey();
+                                                        String nType = "New Posts";
+                                                        String nToUserId = userId;
+                                                        String nFromUserId = dataSnapshot.getKey();
+                                                        String nPostId = postId;
+                                                        String nMessage = postTitle;
+                                                        String nDate = privateStorage.dateTime(System.currentTimeMillis());
+
+                                                        Notification notification = new Notification(nType, nToUserId, nFromUserId, nPostId, nMessage, nDate);
+                                                        firebaseDatabase.getReference("Notifications")
+                                                                .child(nId)
+                                                                .setValue(notification);
+
+                                                    }
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
 
                                 progressDialog.dismiss();
                                 Toasty.Message(getContext(), "Post Upload Successfully.");
