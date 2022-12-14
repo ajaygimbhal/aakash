@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingStart="2dp"
-            android:text="username"
+            android:text="@string/unknown"
             android:textColor="@color/black" />
 
 

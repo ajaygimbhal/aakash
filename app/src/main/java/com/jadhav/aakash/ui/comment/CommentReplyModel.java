@@ -2,31 +2,29 @@ package com.jadhav.aakash.ui.comment;
 
 public class CommentReplyModel {
 
-    private String cRComment_id, cRUser_id, cRUsername, cRUserImg, cRComment, cRCDate;
+    private String cRCommentId, cRUserId, cRUsername, cRUserImg, cRComment, cRCDate;
 
-    public CommentReplyModel(String cRComment_id, String cRUser_id, String cRUsername, String cRUserImg, String cRComment, String cRCDate) {
-        this.cRComment_id = cRComment_id;
-        this.cRUser_id = cRUser_id;
-        this.cRUsername = cRUsername;
-        this.cRUserImg = cRUserImg;
+    public CommentReplyModel(String cRCommentId, String cRUserId, String cRComment, String cRCDate) {
+        this.cRCommentId = cRCommentId;
+        this.cRUserId = cRUserId;
         this.cRComment = cRComment;
         this.cRCDate = cRCDate;
     }
 
-    public String getcRComment_id() {
-        return cRComment_id;
+    public String getcRCommentId() {
+        return cRCommentId;
     }
 
-    public void setcRComment_id(String cRComment_id) {
-        this.cRComment_id = cRComment_id;
+    public void setcRCommentId(String cRCommentId) {
+        this.cRCommentId = cRCommentId;
     }
 
-    public String getcRUser_id() {
-        return cRUser_id;
+    public String getcRUserId() {
+        return cRUserId;
     }
 
-    public void setcRUser_id(String cRUser_id) {
-        this.cRUser_id = cRUser_id;
+    public void setcRUserId(String cRUserId) {
+        this.cRUserId = cRUserId;
     }
 
     public String getcRUsername() {

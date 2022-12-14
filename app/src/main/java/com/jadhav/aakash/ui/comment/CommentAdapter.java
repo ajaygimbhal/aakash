@@ -15,15 +15,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.jadhav.aakash.activities.CommentReplyActivity;
 import com.jadhav.aakash.R;
+import com.jadhav.aakash.activities.CommentReplyActivity;
 import com.jadhav.aakash.databinding.CommentCardViewBinding;
 import com.jadhav.aakash.supports.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentHolder>{
+public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentHolder> {
 
     ArrayList<CommentModel> commentModels;
     Context context;
@@ -52,8 +52,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentH
         return commentModels.size();
     }
 
-    public class CommentHolder extends RecyclerView.ViewHolder{
+    public class CommentHolder extends RecyclerView.ViewHolder {
         CommentCardViewBinding binding;
+        String username;
+        String profileImg;
+
         public CommentHolder(@NonNull View itemView) {
             super(itemView);
             binding = CommentCardViewBinding.bind(itemView);
@@ -63,40 +66,56 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentH
         public void setCommentData(CommentModel commentModel) {
 
 
-            firebaseDatabase.getReference("Users/"+ commentModel.getcUserId())
-                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    if (snapshot.exists()){
-                                        User user = snapshot.getValue(User.class);
-                                        Picasso.get().load(user.getProfileImg()).into(binding.cUserIcon);
-                                        binding.cUsername.setText(user.getUsername());
-                                    }
-                                }
+            firebaseDatabase.getReference("Users/" + commentModel.getcUserId())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                User user = snapshot.getValue(User.class);
+                                username = user.getUsername();
+                                profileImg = user.getProfileImg();
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
+                                binding.cUsername.setText(username);
+                                Picasso.get().load(profileImg).into(binding.cUserIcon);
+                            }
+                        }
 
-                                }
-                            });
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
 
 
             binding.cCommentShow.setText(commentModel.getComment());
             binding.cCommentDate.setText(convertTimeToAgo(commentModel.getcDate()));
-//
-//            if (!commentModel.getCountComment().equals("0")){
-//                binding.cReplyShow.setText("Replies("+ commentModel.getCountComment()+ ")");
-//            }
+
+            firebaseDatabase.getReference("Posts/" + postId + "/comments/" + commentModel.getCommentId() + "/replies")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            int repliesCount = (int) snapshot.getChildrenCount();
+                            if (repliesCount >= 1) {
+                                binding.cReplyShow.setText("Replies(" + repliesCount + ")");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
 
             binding.cReplyShow.setOnClickListener(view -> {
                 Intent intent = new Intent(context, CommentReplyActivity.class);
                 intent.putExtra("postId", postId);
-//                intent.putExtra("commentId", commentModel.getCommentId());
-//                intent.putExtra("userId", commentModel.getcUserId());
-//                intent.putExtra("username", commentModel.getUsername());
-//                intent.putExtra("image", commentModel.getImageUrl());
-//                intent.putExtra("comment", commentModel.getComment());
-//                intent.putExtra("cDate", commentModel.getcDate());
+                intent.putExtra("commentId", commentModel.getCommentId());
+                intent.putExtra("userId", commentModel.getcUserId());
+                intent.putExtra("username", username);
+                intent.putExtra("profileImg", profileImg);
+                intent.putExtra("comment", commentModel.getComment());
+                intent.putExtra("cDate", commentModel.getcDate());
                 context.getApplicationContext().startActivity(intent);
             });
         }

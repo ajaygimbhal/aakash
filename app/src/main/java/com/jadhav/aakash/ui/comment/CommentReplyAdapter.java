@@ -1,40 +1,38 @@
 package com.jadhav.aakash.ui.comment;
 
+import static com.jadhav.aakash.supports.PrivateStorage.convertTimeToAgo;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.jadhav.aakash.R;
+import com.jadhav.aakash.databinding.CommentCardViewBinding;
+import com.jadhav.aakash.supports.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class CommentReplyAdapter extends RecyclerView.Adapter<CommentReplyAdapter.CommentReplyHolder> {
 
+    public OnClickListener clickListener;
     ArrayList<CommentReplyModel> commentReplyModelList;
-    LinearLayout replyInputBox;
-    TextView replyOldUsername;
-    EditText commentInputReply;
     Context context;
-    CommentHelpModel commentHelpModel = new CommentHelpModel();
+    FirebaseDatabase firebaseDatabase;
 
-    public CommentReplyAdapter(ArrayList<CommentReplyModel> commentReplyModelList, LinearLayout replyInputBox, TextView replyOldUsername, EditText commentInputReply, Context context) {
+    public CommentReplyAdapter(ArrayList<CommentReplyModel> commentReplyModelList, Context context, OnClickListener clickListener) {
         this.commentReplyModelList = commentReplyModelList;
-        this.replyInputBox = replyInputBox;
-        this.replyOldUsername = replyOldUsername;
-        this.commentInputReply = commentInputReply;
         this.context = context;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -45,7 +43,7 @@ public class CommentReplyAdapter extends RecyclerView.Adapter<CommentReplyAdapte
 
     @Override
     public void onBindViewHolder(@NonNull CommentReplyHolder holder, int position) {
-        holder.setCommentReplyData(commentReplyModelList.get(position), context);
+        holder.setCommentReplyData(commentReplyModelList.get(position), clickListener);
     }
 
     @Override
@@ -53,38 +51,61 @@ public class CommentReplyAdapter extends RecyclerView.Adapter<CommentReplyAdapte
         return commentReplyModelList.size();
     }
 
+    public interface OnClickListener {
+        void OnClick(String commentId, String userId, String username);
+    }
+
     public class CommentReplyHolder extends RecyclerView.ViewHolder {
 
-        CircleImageView cUserIcon;
-        TextView cUsername, cCommentShow, cCommentDate, cReplyShow;
+        CommentCardViewBinding binding;
 
         public CommentReplyHolder(@NonNull View itemView) {
             super(itemView);
-            cUserIcon = itemView.findViewById(R.id.cUserIcon);
-            cUsername = itemView.findViewById(R.id.cUsername);
-            cCommentShow = itemView.findViewById(R.id.cCommentShow);
-            cCommentDate = itemView.findViewById(R.id.cCommentDate);
-            cReplyShow = itemView.findViewById(R.id.cReplyShow);
+            binding = CommentCardViewBinding.bind(itemView);
+            firebaseDatabase = FirebaseDatabase.getInstance();
+
         }
 
-        public void setCommentReplyData(CommentReplyModel commentReplyModel, Context context) {
-            Picasso.get().load(commentReplyModel.getcRUserImg()).into(cUserIcon);
-            cUsername.setText(commentReplyModel.getcRUsername());
-            cCommentShow.setText(HtmlCompat.fromHtml(commentReplyModel.getcRComment(), HtmlCompat.FROM_HTML_MODE_LEGACY));
+        public void setCommentReplyData(CommentReplyModel commentReplyModel, OnClickListener clickListener) {
 
-            //cCommentDate.setText(convertTimeToAgo(commentReplyModel.getcRCDate()));
 
-            cReplyShow.setOnClickListener(view -> {
+            firebaseDatabase.getReference("Users/" + commentReplyModel.getcRUserId())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                User user = snapshot.getValue(User.class);
+                                String username = user.getUsername();
+                                String profileImg = user.getProfileImg();
 
-                commentHelpModel.setOldUsersId(commentReplyModel.getcRUser_id());
-                commentHelpModel.setOldUsername(commentReplyModel.getcRUsername());
-                commentHelpModel.setOldCommentId(commentReplyModel.getcRComment_id());
-                replyInputBox.setVisibility(View.VISIBLE);
-                replyOldUsername.setText(commentHelpModel.getOldUsername());
+                                commentReplyModel.setcRUsername(username);
+                                commentReplyModel.setcRUserImg(profileImg);
 
-                commentInputReply.requestFocus();
-                InputMethodManager imm = (InputMethodManager) context.getSystemService(context.getApplicationContext().INPUT_METHOD_SERVICE);
-                imm.showSoftInput(commentInputReply, InputMethodManager.SHOW_FORCED);
+                                Picasso.get().load(commentReplyModel.getcRUserImg()).into(binding.cUserIcon);
+                                binding.cUsername.setText(commentReplyModel.getcRUsername());
+
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+
+            binding.cCommentShow.setText(HtmlCompat.fromHtml(commentReplyModel.getcRComment(), HtmlCompat.FROM_HTML_MODE_LEGACY));
+
+            binding.cCommentDate.setText(convertTimeToAgo(commentReplyModel.getcRCDate()));
+
+            binding.cReplyShow.setOnClickListener(view -> {
+
+                String commentId = commentReplyModel.getcRCommentId();
+                String cUserId = commentReplyModel.getcRUserId();
+                String cUsername = commentReplyModel.getcRUsername();
+                clickListener.OnClick(commentId, cUserId, cUsername);
+
             });
 
         }
