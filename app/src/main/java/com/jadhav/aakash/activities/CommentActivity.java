@@ -267,8 +267,6 @@ public class CommentActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             commentModelList.clear();
-                            binding.commentRecyclerView.setVisibility(View.VISIBLE);
-                            binding.commentNoFound.setVisibility(View.GONE);
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                 Comment comment = dataSnapshot.getValue(Comment.class);
                                 String commentId = dataSnapshot.getKey();
@@ -282,9 +280,6 @@ public class CommentActivity extends AppCompatActivity {
                             Collections.reverse(commentModelList);
                             commentAdapter.notifyDataSetChanged();
 
-                        } else {
-                            binding.commentRecyclerView.setVisibility(View.GONE);
-                            binding.commentNoFound.setVisibility(View.VISIBLE);
                         }
                     }
 
@@ -320,7 +315,7 @@ public class CommentActivity extends AppCompatActivity {
                                                         .setValue(commentsCount + 1);
                                                 binding.cCommentInputBox.setVisibility(View.GONE);
                                                 binding.cComment.setText("");
-                                                if ((View)getCurrentFocus() != null) {
+                                                if ((View) getCurrentFocus() != null) {
                                                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                                                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                                                 }

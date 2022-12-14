@@ -189,7 +189,7 @@
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:scaleType="centerCrop"
-                app:srcCompat="@android:drawable/ic_menu_send" />
+                android:src="@drawable/ic_comment_send"  />
 
         </LinearLayout>
 
