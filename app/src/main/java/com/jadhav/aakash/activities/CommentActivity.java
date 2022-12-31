@@ -6,6 +6,7 @@ import static com.jadhav.aakash.supports.PrivateStorage.USER_ID;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import com.jadhav.aakash.supports.Notification;
 import com.jadhav.aakash.supports.Post;
 import com.jadhav.aakash.supports.PrivateStorage;
 import com.jadhav.aakash.supports.Toasty;
+import com.jadhav.aakash.supports.User;
 import com.jadhav.aakash.ui.comment.CommentAdapter;
 import com.jadhav.aakash.ui.comment.CommentModel;
 import com.squareup.picasso.Picasso;
@@ -118,6 +120,63 @@ public class CommentActivity extends AppCompatActivity {
         binding.cCommentBtn.setOnClickListener(view -> {
             commentStore();
         });
+
+
+        replyActivityRedirect();
+
+    }
+
+    private void replyActivityRedirect() {
+
+        if (getIntent().getBooleanExtra("Reply", false)) {
+
+
+            firebaseDatabase.getReference("Users").child(getIntent().getStringExtra("fromUserId"))
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                User user = snapshot.getValue(User.class);
+
+                                firebaseDatabase.getReference("Posts/" + postId + "/comments/" + getIntent().getStringExtra("commentId"))
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                if (snapshot.exists()) {
+                                                    Comment comment = snapshot.getValue(Comment.class);
+
+                                                    Intent intent = new Intent(getApplicationContext(), CommentReplyActivity.class);
+                                                    intent.putExtra("postId", postId);
+                                                    intent.putExtra("commentId", getIntent().getStringExtra("commentId"));
+                                                    intent.putExtra("userId", getIntent().getStringExtra("fromUserId"));
+                                                    intent.putExtra("username", user.getUsername());
+                                                    intent.putExtra("profileImg", user.getProfileImg());
+                                                    intent.putExtra("comment", comment.getComment());
+                                                    intent.putExtra("cDate", comment.getCommentAt());
+                                                    startActivity(intent);
+
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+
+        }
+
 
     }
 
@@ -333,7 +392,7 @@ public class CommentActivity extends AppCompatActivity {
 
                                                                     if (nFromUserId != nToUserId) {
 
-                                                                        Notification notification = new Notification(nType, nToUserId, nFromUserId, nPostId, nMessage, nDate);
+                                                                        Notification notification = new Notification(nType, nToUserId, nFromUserId, nPostId, nMessage, "", nDate);
                                                                         firebaseDatabase.getReference("Notifications")
                                                                                 .child(nId)
                                                                                 .setValue(notification);

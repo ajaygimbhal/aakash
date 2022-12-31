@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,16 +25,21 @@ import com.jadhav.aakash.R;
 import com.jadhav.aakash.databinding.FragmentNotificationsBinding;
 import com.jadhav.aakash.supports.Notification;
 import com.jadhav.aakash.supports.PrivateStorage;
+import com.jadhav.aakash.supports.User;
 
 import java.util.ArrayList;
 
 public class NotificationsFragment extends Fragment {
 
+    private final static String TAG = "NotificationsFragment";
     FirebaseDatabase firebaseDatabase;
+    int notificationCount = 0;
+    int notificationPosition = 1;
     private FragmentNotificationsBinding binding;
     private ArrayList<NotificationsModel> notificationsModels = new ArrayList<>();
     private NotificationsAdapter notificationsAdapter;
     private PrivateStorage privateStorage;
+    private int loadLimit = 10;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -66,30 +72,66 @@ public class NotificationsFragment extends Fragment {
     private void loadNotificationData() {
         firebaseDatabase.getReference("Notifications")
                 .orderByChild("nFromUserId").equalTo(privateStorage.userDetail().put(USER_ID, null))
+                .limitToLast(loadLimit)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             notificationsModels.clear();
-                            binding.notifyRecycler.setVisibility(View.VISIBLE);
-                            binding.notifyNotFound.setVisibility(View.GONE);
+
+                            if (binding != null){
+                                binding.notifyRecycler.setVisibility(View.VISIBLE);
+                                binding.notifyNotFound.setVisibility(View.GONE);
+                            }
+                            notificationCount = (int) snapshot.getChildrenCount();
 
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                                 Notification notification = dataSnapshot.getValue(Notification.class);
-
                                 String nId = dataSnapshot.getKey();
                                 String nType = notification.getnType();
                                 String nPostId = notification.getnPostId();
                                 String nMessage = notification.getnMessage();
+                                String nCommentId = notification.getnCommentId();
                                 String nToUserId = notification.getnToUserId();
                                 String nFromUserId = notification.getnFromUserId();
                                 String nDate = notification.getnDate();
                                 boolean nRead = notification.isnRead();
-                                notificationsModels.add(new NotificationsModel(nId, nType, nMessage, nToUserId, nFromUserId, nPostId, nDate, nRead));
 
+                                firebaseDatabase.getReference("Users/" + nToUserId)
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                User user = snapshot.getValue(User.class);
+
+                                                firebaseDatabase.getReference("Posts/" + nPostId + "/postImageUrl")
+                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                String postImageUrl = snapshot.getValue().toString();
+                                                                notificationsModels.add(new NotificationsModel(nId, nType, nMessage, nCommentId, nToUserId, user.getUsername(), user.getProfileImg(), nFromUserId, nPostId, postImageUrl, nDate, nRead));
+
+                                                                if (notificationPosition >= notificationCount) {
+                                                                    notificationsAdapter.notifyDataSetChanged();
+                                                                } else {
+                                                                    Log.d(TAG, "onDataChange: continue " + notificationPosition);
+                                                                }
+                                                                notificationPosition++;
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                            }
+                                                        });
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
                             }
 
-                            notificationsAdapter.notifyDataSetChanged();
 
                         } else {
                             binding.notifyNotFound.setVisibility(View.VISIBLE);
@@ -103,6 +145,7 @@ public class NotificationsFragment extends Fragment {
                     }
                 });
     }
+
 
     @Override
     public void onDestroyView() {

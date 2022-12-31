@@ -3,6 +3,7 @@ package com.jadhav.aakash.ui.notifications;
 import static com.jadhav.aakash.supports.PrivateStorage.convertTimeToAgo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,13 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.jadhav.aakash.R;
+import com.jadhav.aakash.activities.CommentActivity;
 import com.jadhav.aakash.databinding.NotificationCardViewBinding;
-import com.jadhav.aakash.supports.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -91,40 +89,10 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         public void setNotificationData(NotificationsModel notificationsModel) {
 
-            firebaseDatabase.getReference("Users/" + notificationsModel.getNotifyToUserId())
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()) {
-                                User user = snapshot.getValue(User.class);
-                                binding.nUsernameMessage.setText(HtmlCompat.fromHtml("<b>" + user.getUsername() + "</b> " + notificationsModel.getNotifyType() + ": " + notificationsModel.getNotifyMessage(), HtmlCompat.FROM_HTML_MODE_LEGACY));
-                                Picasso.get().load(user.getProfileImg()).into(binding.nUserIcon);
+            binding.nUsernameMessage.setText(HtmlCompat.fromHtml("<b>" + notificationsModel.getNotifyToUsername() + "</b> " + notificationsModel.getNotifyType() + ": " + notificationsModel.getNotifyMessage(), HtmlCompat.FROM_HTML_MODE_LEGACY));
+            Picasso.get().load(notificationsModel.getNotifyToProfileImg()).into(binding.nUserIcon);
 
-
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
-
-            firebaseDatabase.getReference("Posts/" + notificationsModel.getNotifyPostId() + "/postImageUrl/")
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()) {
-                                String postImageUrl = snapshot.getValue().toString();
-                                Picasso.get().load(postImageUrl).into(binding.nPostThumbnail);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
+            Picasso.get().load(notificationsModel.getNotifyPostImg()).into(binding.nPostThumbnail);
 
             binding.nTime.setText(convertTimeToAgo(notificationsModel.getNotifyDate()));
 
@@ -133,6 +101,38 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
             } else {
                 binding.notificationMainItem.setBackgroundColor(Color.parseColor("#CCC6C4"));
             }
+
+
+            binding.nPostThumbnail.setOnClickListener(view -> {
+                Intent intent = new Intent(context, CommentActivity.class);
+                intent.putExtra("postId", notificationsModel.getNotifyPostId());
+                context.startActivity(intent);
+            });
+
+            binding.notificationMainItem.setOnClickListener(view -> {
+                Intent intent = new Intent(context, CommentActivity.class);
+
+                switch (notificationsModel.getNotifyType()) {
+
+                    case "Comment":
+                        intent.putExtra("Comment", true);
+                        intent.putExtra("postId", notificationsModel.getNotifyPostId());
+                        break;
+                    case "Reply":
+                        intent.putExtra("Reply", true);
+                        intent.putExtra("postId", notificationsModel.getNotifyPostId());
+                        intent.putExtra("commentId", notificationsModel.getNotifyCommentId());
+                        intent.putExtra("fromUserId", notificationsModel.getNotifyFromUserId());
+                        break;
+                    default:
+                        intent.putExtra("Post", true);
+                        intent.putExtra("postId", notificationsModel.getNotifyPostId());
+                        break;
+                }
+
+
+                context.startActivity(intent);
+            });
 
 
         }

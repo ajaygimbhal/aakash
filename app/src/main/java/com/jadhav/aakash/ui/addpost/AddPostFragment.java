@@ -198,7 +198,7 @@ public class AddPostFragment extends Fragment {
                                                         String nMessage = postTitle;
                                                         String nDate = privateStorage.dateTime(System.currentTimeMillis());
 
-                                                        Notification notification = new Notification(nType, nToUserId, nFromUserId, nPostId, nMessage, nDate);
+                                                        Notification notification = new Notification(nType, nToUserId, nFromUserId, nPostId, nMessage, "", nDate);
                                                         firebaseDatabase.getReference("Notifications")
                                                                 .child(nId)
                                                                 .setValue(notification);

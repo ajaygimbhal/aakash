@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 
 public class CommentReplyActivity extends AppCompatActivity {
 
+    private final static String TAG = "CommentReplyActivity";
     private static String oldCommentId, oldUserId, oldUsername;
     ActivityCommentReplyBinding binding;
     PrivateStorage privateStorage;
@@ -43,6 +45,7 @@ public class CommentReplyActivity extends AppCompatActivity {
     ArrayList<CommentReplyModel> replyModelArrayList = new ArrayList<>();
     CommentReplyAdapter replyAdapter;
     private String postId, commentId, userId, username, profileImg, comment, cDate;
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,10 +94,10 @@ public class CommentReplyActivity extends AppCompatActivity {
         LinearLayoutManager manager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         replyAdapter = new CommentReplyAdapter(replyModelArrayList, this, new CommentReplyAdapter.OnClickListener() {
             @Override
-            public void OnClick(String commentId, String userId, String username) {
-                oldCommentId = commentId;
-                oldUserId = userId;
-                oldUsername = username;
+            public void OnClick(String aCommentId, String aUserId, String aUsername) {
+                oldCommentId = aCommentId;
+                oldUserId = aUserId;
+                oldUsername = aUsername;
 
                 binding.cReplyOldUsername.setText(oldUsername);
                 binding.boxCloseView.setVisibility(View.VISIBLE);
@@ -251,18 +254,22 @@ public class CommentReplyActivity extends AppCompatActivity {
 
                                 String nId = firebaseDatabase.getReference("Notifications").push().getKey();
                                 String nType = "Reply";
-                                String nToUserId = userId;
+                                String nToUserId = privateStorage.userDetail().put(USER_ID, null);
                                 String nFromUserId = fromUserId;
                                 String nPostId = postId;
                                 String nMessage = message;
+                                String nCommentId = commentId;
                                 String nDate = privateStorage.dateTime(System.currentTimeMillis());
 
-                                if (nFromUserId != nToUserId){
+                                if (!nFromUserId.equals(nToUserId)){
 
-                                    Notification notification = new Notification(nType, nToUserId, nFromUserId, nPostId, nMessage, nDate);
+                                    Notification notification = new Notification(nType, nToUserId, nFromUserId, nPostId, nMessage, nCommentId, nDate);
                                     firebaseDatabase.getReference("Notifications")
                                             .child(nId)
                                             .setValue(notification);
+                                    Log.d(TAG, "replyStore: notification");
+                                }else{
+                                    Log.d(TAG, "replyStore: " + nFromUserId + " toUserId "+ nToUserId);
                                 }
 
                                 progressDialog.dismiss();

@@ -10,18 +10,20 @@ public class Notification {
     private String nFromUserId;
     private String nPostId;
     private String nMessage;
+    private String nCommentId;
     private String nDate;
     private boolean nRead = false;
 
     public Notification() {
     }
 
-    public Notification(String nType, String nToUserId, String nFromUserId, String nPostId, String nMessage, String nDate) {
+    public Notification(String nType, String nToUserId, String nFromUserId, String nPostId, String nMessage, String nCommentId, String nDate) {
         this.nType = nType;
         this.nToUserId = nToUserId;
         this.nFromUserId = nFromUserId;
         this.nPostId = nPostId;
         this.nMessage = nMessage;
+        this.nCommentId = nCommentId;
         this.nDate = nDate;
     }
 
@@ -63,6 +65,14 @@ public class Notification {
 
     public void setnMessage(String nMessage) {
         this.nMessage = nMessage;
+    }
+
+    public String getnCommentId() {
+        return nCommentId;
+    }
+
+    public void setnCommentId(String nCommentId) {
+        this.nCommentId = nCommentId;
     }
 
     public String getnDate() {
