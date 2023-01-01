@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -39,7 +40,10 @@ public class NotificationsFragment extends Fragment {
     private ArrayList<NotificationsModel> notificationsModels = new ArrayList<>();
     private NotificationsAdapter notificationsAdapter;
     private PrivateStorage privateStorage;
+
     private int loadLimit = 10;
+    boolean isScroll = false;
+    int currentItems, totalItems, scrollOutItems;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -61,10 +65,39 @@ public class NotificationsFragment extends Fragment {
 
 
         loadNotificationData();
+
         notificationsAdapter = new NotificationsAdapter(notificationsModels, getContext());
-        binding.notifyRecycler.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+        LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+        binding.notifyRecycler.setLayoutManager(manager);
         binding.notifyRecycler.setAdapter(notificationsAdapter);
         notificationsAdapter.notifyDataSetChanged();
+
+
+        binding.notifyRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                    isScroll = true;
+                }
+
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                currentItems = manager.getChildCount();
+                totalItems = manager.getItemCount();
+                scrollOutItems = manager.findFirstVisibleItemPosition();
+
+                if (isScroll && (currentItems + scrollOutItems == totalItems)){
+                    isScroll = false;
+                    loadNotificationData();
+                }
+            }
+        });
+
 
         return binding.getRoot();
     }
@@ -112,6 +145,7 @@ public class NotificationsFragment extends Fragment {
 
                                                                 if (notificationPosition >= notificationCount) {
                                                                     notificationsAdapter.notifyDataSetChanged();
+                                                                    loadLimit += 10;
                                                                 } else {
                                                                     Log.d(TAG, "onDataChange: continue " + notificationPosition);
                                                                 }

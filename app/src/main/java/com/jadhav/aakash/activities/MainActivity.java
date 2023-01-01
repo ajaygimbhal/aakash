@@ -1,21 +1,31 @@
 package com.jadhav.aakash.activities;
 
+import static com.jadhav.aakash.supports.PrivateStorage.USER_ID;
+
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.jadhav.aakash.R;
 import com.jadhav.aakash.databinding.ActivityMainBinding;
+import com.jadhav.aakash.supports.PrivateStorage;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    FirebaseDatabase firebaseDatabase;
+    PrivateStorage privateStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         getSupportActionBar().hide();
+        privateStorage = new PrivateStorage(this);
+        firebaseDatabase = FirebaseDatabase.getInstance();
+
+
+
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.navigation_home, R.id.navigation_friends, R.id.navigation_add_post, R.id.navigation_notifications, R.id.navigation_profile)
                 .build();

@@ -129,8 +129,9 @@ public class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.View
                         intent.putExtra("postId", notificationsModel.getNotifyPostId());
                         break;
                 }
-
-
+                firebaseDatabase.getReference("Notifications")
+                        .child(notificationsModel.getNotifyId())
+                        .child("nRead").setValue(true);
                 context.startActivity(intent);
             });
 
