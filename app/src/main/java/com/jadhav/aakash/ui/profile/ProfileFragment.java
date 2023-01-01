@@ -37,6 +37,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.jadhav.aakash.R;
 import com.jadhav.aakash.databinding.FragmentProfileBinding;
 import com.jadhav.aakash.supports.CompressImage;
 import com.jadhav.aakash.supports.Post;
@@ -160,18 +161,27 @@ public class ProfileFragment extends Fragment {
                 e.printStackTrace();
             }
 
+            binding.inviteFriends.setOnClickListener(view -> {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_TEXT, getResources().getText(R.string.web_root_url) + "/friend/" + privateStorage.userDetail().put(USER_ID, null));
+                    startActivity(Intent.createChooser(intent, "Choose One"));
+                } catch (Exception e) {
+                }
+            });
+
 
             int totalMember = privateStorage.getUserMemberCount();
             String memberText = totalMember > 9 ? "Members: " + totalMember : totalMember > 1 ? "Members: 0" + totalMember : "Member: 0" + totalMember;
             binding.userProfileMember.setText(memberText);
 
-            firebaseDatabase.getReference("Users/" + privateStorage.userDetail().put(USER_ID, null))
+            firebaseDatabase.getReference("Users/" + privateStorage.userDetail().put(USER_ID, null) + "/members")
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if (snapshot.exists()) {
-                                User user = snapshot.getValue(User.class);
-                                int memberCount = user.getMemberCount();
+                                int memberCount = (int) snapshot.getChildrenCount();
                                 privateStorage.setUserMemberCount(memberCount);
 
                                 String member = memberCount > 9 ? "Members: " + memberCount : memberCount > 1 ? "Members: 0" + memberCount : "Member: 0" + memberCount;

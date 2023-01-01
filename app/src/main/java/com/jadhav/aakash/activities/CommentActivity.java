@@ -4,13 +4,16 @@ import static com.jadhav.aakash.supports.PrivateStorage.PROFILE_BITMAP_IMAGE;
 import static com.jadhav.aakash.supports.PrivateStorage.USERNAME;
 import static com.jadhav.aakash.supports.PrivateStorage.USER_ID;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -40,10 +43,10 @@ import java.util.Collections;
 public class CommentActivity extends AppCompatActivity {
 
     private static String postId;
+    private final String TAG = "CommentActivity";
     ActivityCommentBinding binding;
     PrivateStorage privateStorage;
     FirebaseDatabase firebaseDatabase;
-
     ProgressDialog progressDialog;
     ArrayList<CommentModel> commentModelList = new ArrayList<>();
     CommentAdapter commentAdapter;
@@ -62,11 +65,21 @@ public class CommentActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
 
+
         privateStorage = new PrivateStorage(this);
         firebaseDatabase = FirebaseDatabase.getInstance();
 
         try {
             postId = getIntent().getStringExtra("postId");
+
+            if (getIntent().getAction().equals(Intent.ACTION_VIEW) && getIntent().getData() != null) {
+                String postUrl = String.valueOf(getIntent().getData());
+
+                postId = postUrl.substring(postUrl.lastIndexOf("/") + 1);
+                Log.d(TAG, "onCreate: " + postId + " "+ postUrl);
+
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -130,7 +143,8 @@ public class CommentActivity extends AppCompatActivity {
 
         if (getIntent().getBooleanExtra("Reply", false)) {
 
-
+            progressDialog.setMessage("Redirecting...");
+            progressDialog.show();
             firebaseDatabase.getReference("Users").child(getIntent().getStringExtra("fromUserId"))
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -154,6 +168,7 @@ public class CommentActivity extends AppCompatActivity {
                                                     intent.putExtra("comment", comment.getComment());
                                                     intent.putExtra("cDate", comment.getCommentAt());
                                                     startActivity(intent);
+                                                    progressDialog.dismiss();
 
                                                 }
                                             }
@@ -304,8 +319,30 @@ public class CommentActivity extends AppCompatActivity {
                                         }
                                     });
 
+                            // post share action //
+                            binding.shareBtn.setOnClickListener(view -> {
+                                try {
+                                    Intent intent = new Intent(Intent.ACTION_SEND);
+                                    intent.setType("text/plain");
+                                    intent.putExtra(Intent.EXTRA_TEXT, getResources().getText(R.string.web_root_url) + "/post/" + postId);
+                                    startActivity(Intent.createChooser(intent, "Choose One"));
+
+                                } catch (Exception e) {
+                                }
+
+                            });
+
                         } else {
-                            Toasty.Message(getApplicationContext(), "Not Found");
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(CommentActivity.this);
+                            builder.setMessage("ID: " + postId + " Related Post Not Found.");
+                            builder.setTitle("Message");
+                            builder.setCancelable(false);
+                            builder.setPositiveButton("Back", (DialogInterface.OnClickListener) (dialog, which) -> {
+                                finish();
+                            });
+                            AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
                         }
                     }
 
@@ -353,6 +390,7 @@ public class CommentActivity extends AppCompatActivity {
 
             if (privateStorage.isUserLogin()) {
                 if (binding.cComment.getText().toString().length() > 0) {
+                    progressDialog.setMessage("Comment Adding...");
                     progressDialog.show();
                     String commentId = firebaseDatabase.getReference("Posts/" + postId + "/comments/").push().getKey();
                     String userId = privateStorage.userDetail().put(USER_ID, null);

@@ -11,10 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.jadhav.aakash.activities.PostEditActivity;
 import com.jadhav.aakash.R;
+import com.jadhav.aakash.activities.CommentActivity;
+import com.jadhav.aakash.activities.PostEditActivity;
 import com.jadhav.aakash.databinding.ProfilePostCardViewBinding;
 import com.jadhav.aakash.supports.Toasty;
 import com.squareup.picasso.Picasso;
@@ -116,8 +120,28 @@ public class ProfilePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             .child(profilePostModel.getPostId())
                             .removeValue().addOnSuccessListener(unused -> {
                                 firebaseStorage.getReferenceFromUrl(profilePostModel.getPostImage()).delete();
-                                progressDialog.dismiss();
-                                Toasty.Message(context, "Post Delete Success");
+
+                                firebaseDatabase.getReference("Notifications")
+                                        .orderByChild("nPostId").equalTo(profilePostModel.getPostId())
+                                        .addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                if (snapshot.exists()) {
+                                                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                                                        firebaseDatabase.getReference("Notifications/" + dataSnapshot.getKey()).removeValue();
+                                                    }
+                                                    progressDialog.dismiss();
+                                                    Toasty.Message(context, "Post Delete Success");
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                            }
+                                        });
+
+
                             })
                             .addOnFailureListener(e -> {
                                 progressDialog.dismiss();
@@ -133,6 +157,13 @@ public class ProfilePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 dialog.show();
 
 
+            });
+
+            // single post open
+            binding.postImgUrl.setOnClickListener(view -> {
+                Intent intent = new Intent(context, CommentActivity.class);
+                intent.putExtra("postId", profilePostModel.getPostId());
+                context.startActivity(intent);
             });
         }
     }

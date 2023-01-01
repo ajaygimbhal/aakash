@@ -17,4 +17,5 @@
     <string name="member">Member</string>
     <string name="logout">LogOut</string>
     <string name="post_not_found">Post Not Found</string>
+    <string name="web_root_url">https://aakash-12f7e.web.app</string>
 </resources>

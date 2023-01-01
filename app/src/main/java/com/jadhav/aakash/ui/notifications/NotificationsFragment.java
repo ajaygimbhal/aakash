@@ -36,14 +36,13 @@ public class NotificationsFragment extends Fragment {
     FirebaseDatabase firebaseDatabase;
     int notificationCount = 0;
     int notificationPosition = 1;
+    boolean isScroll = false;
+    int currentItems, totalItems, scrollOutItems;
     private FragmentNotificationsBinding binding;
     private ArrayList<NotificationsModel> notificationsModels = new ArrayList<>();
     private NotificationsAdapter notificationsAdapter;
     private PrivateStorage privateStorage;
-
     private int loadLimit = 10;
-    boolean isScroll = false;
-    int currentItems, totalItems, scrollOutItems;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -78,7 +77,7 @@ public class NotificationsFragment extends Fragment {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                     isScroll = true;
                 }
 
@@ -91,7 +90,7 @@ public class NotificationsFragment extends Fragment {
                 totalItems = manager.getItemCount();
                 scrollOutItems = manager.findFirstVisibleItemPosition();
 
-                if (isScroll && (currentItems + scrollOutItems == totalItems)){
+                if (isScroll && (currentItems + scrollOutItems == totalItems)) {
                     isScroll = false;
                     loadNotificationData();
                 }
@@ -112,7 +111,7 @@ public class NotificationsFragment extends Fragment {
                         if (snapshot.exists()) {
                             notificationsModels.clear();
 
-                            if (binding != null){
+                            if (binding != null) {
                                 binding.notifyRecycler.setVisibility(View.VISIBLE);
                                 binding.notifyNotFound.setVisibility(View.GONE);
                             }
@@ -140,8 +139,10 @@ public class NotificationsFragment extends Fragment {
                                                         .addListenerForSingleValueEvent(new ValueEventListener() {
                                                             @Override
                                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                String postImageUrl = snapshot.getValue().toString();
-                                                                notificationsModels.add(new NotificationsModel(nId, nType, nMessage, nCommentId, nToUserId, user.getUsername(), user.getProfileImg(), nFromUserId, nPostId, postImageUrl, nDate, nRead));
+                                                                if (snapshot.exists()) {
+                                                                    String postImageUrl = snapshot.getValue().toString();
+                                                                    notificationsModels.add(new NotificationsModel(nId, nType, nMessage, nCommentId, nToUserId, user.getUsername(), user.getProfileImg(), nFromUserId, nPostId, postImageUrl, nDate, nRead));
+                                                                }
 
                                                                 if (notificationPosition >= notificationCount) {
                                                                     notificationsAdapter.notifyDataSetChanged();

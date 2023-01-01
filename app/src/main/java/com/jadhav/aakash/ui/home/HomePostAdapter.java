@@ -391,6 +391,19 @@ public class HomePostAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 intent.putExtra("postId", homePostModel.getPostId());
                 context.startActivity(intent);
             });
+
+            // post share
+            binding.shareBtn.setOnClickListener(view -> {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_TEXT, context.getResources().getText(R.string.web_root_url) + "/post/" + homePostModel.getPostId());
+                    context.startActivity(Intent.createChooser(intent, "Choose One"));
+                } catch (Exception e) {
+                }
+
+            });
+
         }
 
     }
