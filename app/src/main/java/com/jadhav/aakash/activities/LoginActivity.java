@@ -153,6 +153,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
         } catch (ApiException e) {
+            progressDialog.dismiss();
             mGoogleSignInClient.signOut();
             Log.w(TAG, "signInResult:failed code= " + e.getStatusCode());
             Toasty.Message(this, "signInResult:failed code=" + e.getStatusCode());

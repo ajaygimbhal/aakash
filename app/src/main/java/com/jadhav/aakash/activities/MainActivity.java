@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void appUpdateCheck() {
-        
+
         firebaseDatabase.getReference("versionCode")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
